@@ -31,64 +31,90 @@ from shareMember.models import ShareMember
 from university.models import University
 
 
+# 자료 공유 게시글 상세 view
 class ShareDetailView(View):
     def get(self, request, id):
+        # 해당 게시글의 id를 이용하여 share객체 1개 가져오기 -> post로 선언
         post = Share.objects.get(id=id)
 
+        # 게시글을 작성한 대학생 회원 객체 1개 가져와서 university_member로 선언
         university_member = University.objects.get(member=post.university)
+
+        # 상세 페이지 내에 들어갈 작성자의 글
+        # 작성자가 현재 게시글(post)의 작성자와 같은 글들 중, 삭제되지 않은 글들만 최신순으로 가져오기
         post_list = Share.enabled_objects.filter(university=university_member).order_by('-id')
+        # Paginator를 사용하여 최신글 4개만 가져와서 posts로 선언
         page = request.GET.get('page', 1)
         paginator = Paginator(post_list, 4)
         posts = paginator.page(page)
 
-        # 파일 가져오기
+        # 이미지 파일 가져오기
+        # 4개의 자료글 하나씩 돌면서
         for p in posts:
+            # 해당 장소와 연관된 file 중, 첫 번째 파일만 가져와 first_file로 선언
             first_file = p.sharefile_set.first()
             if first_file:
                 file_name = first_file.path.name
                 file_extension = file_name.split('.')[-1].lower()  # 파일 확장자 추출
+                # 추출된 확장자 -> file_extension으로 선언
                 p.file_extension = file_extension
-                # 파일이 있으면 파일의 경로를 기반으로 URL 생성
-                p.image_url = f"{MEDIA_URL}{first_file.path}"
-            else:
-                p.image_url = None
 
         # 리뷰 평균과 개수
+        # 해당 게시글에 작성된 리뷰 중, 삭제되지 않은 리뷰만 가져와 reviews로 선언
         reviews = ShareReview.enabled_objects.filter(share_id=post.id)
+        # 만약 리뷰가 있다면
         if len(reviews) > 0:
+            # 집계함수를 이용 -> 총 개수를 review_count로 선언
             review_count = reviews.count()
+            # 각 리뷰들의 별점을 기반으로 aggregate 함수 사용 -> 전체 평균을 구하여 review_avg_decimal로 선언
             review_avg_decimal = reviews.aggregate(avg_rating=Avg('review__review_rating'))['avg_rating']
+            # 구한 평균을 소수점 한자리까지 반올림 -> review_avg_rounded로 선언
             review_avg_rounded = Decimal(review_avg_decimal).quantize(Decimal('0.1'))
+        # 리뷰가 없다면
         else:
+            # 리뷰 개수 = 0
             review_count = 0
+            # 리뷰 평균 = 0.0
             review_avg_rounded = 0.0
 
         # 좋아요 수
+        # 좋아요가 되어있는 글들 중, 해당 게시글의 좋아요만 가져오기 -> 집계함수를 사용 -> 해당 게시글의 총 좋아요 수 = share_like_count로 선언
         share_like_count = ShareLike.objects.filter(share=post).count()
 
         # 원랩 수
+        # 회원이 들어가 있는 원랩 전부 가져오기
         onelabs = OneLab.objects.filter(university=university_member)
+        # 집계함수를 이용 -> 총 개수 oelab_count로 선언
         onelab_count = onelabs.count()
 
         # 회원이 좋아요를 한 상태인지
+        # 로그인 되어있는(session에 저장되어 있는) 회원 객체 1개 가져와 member로 선언
         member = Member.objects.get(id=request.session['member']['id'])
+        # 해당 글에 좋아요를 한 sharelike 객체 가져와서 share_likes로 선언
         share_likes = ShareLike.objects.filter(share=post)
+
+        # member가 좋아요를 한 상태인지 결정할 flag를 member_like로 선언, 초기값은 False
         member_like = False
+        # 하나씩 반복
         for share_like in share_likes:
             try:
-                # 해당 Like 객체를 가져옵니다.
+                # 해당 Like 객체
+                # member = 현재 로그인된 회원, like_status = 좋아요를 한 상태(취소시, False로 상태변경됨), id = 해당 share_like객체의 like_id
                 like_object = Like.objects.get(member=member, like_status=True, id=share_like.like_id)
-                # 예외가 발생하지 않았으므로, 해당 Like 객체가 존재합니다.
+                # 해당 Like 객체가 존재
+                # 로그인된 회원이 해당 게시글에 좋아요를 한 상태이므로, member_like를 True로 변경
                 member_like = True
+            # 해당 Like 객체가 존재하지 않는다면
             except Like.DoesNotExist:
-                # 해당 Like 객체가 존재하지 않습니다.
+                # 좋아요한 상태가 아님
                 member_like = False
 
+        # 해당 회원의 프로필이미지 가져오기
         profile = MemberFile.objects.filter(member=university_member.member)
         if profile:
             profile = profile[0]
-        # print(profile.path)
 
+        # 위에서 가져온 data들을 dict 타입인 context로 선언
         context = {
             'share': post,
             'share_files': list(post.sharefile_set.all()),
@@ -101,7 +127,7 @@ class ShareDetailView(View):
             'member_like': member_like,
             'profile': profile.path,
         }
-
+        # 상세보기 페이지로 이동하면서 context 함께 전달
         return render(request, 'share/detail.html', context)
 
     # ------------------------------------------------------------------------------
@@ -148,12 +174,16 @@ class ShareDetailView(View):
         return redirect('/myPage/main/')
 
 
-# 좋아요
+# 좋아요를 누를 때마다 들어오는 View
+
 class ShareLikeView(View):
+    @transaction.atomic
     def post(self, request):
+        # 요청 방식이 post이고, ajax라면
         if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            # json 받아오기
+            # # JSON 데이터 파싱
             data = json.loads(request.body)
+            # body에 있는 share_id 가져와서 share_id 선언
             share_id = data.get('share_id')
             # 해당 share_id 가진 게시글 가져오기
             share = Share.objects.get(id=share_id)
@@ -179,17 +209,22 @@ class ShareLikeView(View):
                 like = Like.objects.create(member=member, like_status=True)
                 share_like = ShareLike.objects.create(share=share, like=like)
 
-            # 좋아요 수 응답하기
+            # 업데이트 된 좋아요 수 응답하기
             share_like_count = ShareLike.objects.filter(share=share).count()
             return JsonResponse({'like_count': share_like_count})
 
-        # AJAX 요청이 아닌 경우
+        # AJAX 요청이 아닌 경우, 상세보기 페이지로 이동
         return render(request, 'share/detail.html')
 
-
+# 자료 공유 글 작성할 때 view
 class ShareWriteView(View):
+    # 작성 페이지로 이동할 때
+    @transaction.atomic
     def get(self, request):
+        # 로그인 되어있는 회원 객체 -> member로 선언
         member = Member.objects.get(id=request.session['member']['id'])
+        # 대학생 회원만 자료공유 글을 작성할 수 있음
+        # member객체가 member인 학교 회원 객체 1개 가져와 university_member로 선언
         university_member = University.objects.get(member=member)
 
         # 학교 이메일 도메인 부분 추출
@@ -208,44 +243,57 @@ class ShareWriteView(View):
 
         university_member.save()
 
-        # 마이 포인트
+        # 마이 포인트 계산
+        # member=member이고 point_status=3인 point객체가 있다면
         if len(list(Point.objects.filter(member=member, point_status=3))) > 0:
+            # Sum과 aggregate함수를 이용하여 해당 포인트들의 합을 구한 뒤, point로 선언
             point = Point.objects.filter(member=member, point_status=3).aggregate(Sum('point'))['point__sum']
         else:
+            # 로그인 한 회원의 포인트 내역이 없다면, insert
             point = Point.objects.create(member=member, point_status=3).point
 
         # 마이 포스트 수
+        # 로그인 한 회원이 작성한 글 수 구하기
+        # 자료글
         share_post_count = Share.enabled_objects.filter(university=university_member).count()
-        community_post_count = Community.objects.filter(
+        # 커뮤니티 글
+        community_post_count = Community.enabled_objects.filter(
             member=member).count()  # community, onelab도 enabled_objects로 바꾸기
-        onelab_post_count = OneLab.objects.filter(university=university_member).count()
+        # 원랩 글
+        onelab_post_count = OneLab.enabled_objects.filter(university=university_member).count()
+        # 집계함수를 통해 구한 글들 모두 합한 총 개수 -> total_post_count로 선언
         total_post_count = share_post_count + community_post_count + onelab_post_count
 
         # 마이 원랩 수
+        # 회원이 들어가 있는 원랩 전부 가져오기
         onelabs = OneLab.objects.filter(university=university_member)
+        # 집계함수를 이용 -> 총 개수 onelab_count로 선언
         onelab_count = onelabs.count()
 
+        # 위에서 가져온 데이터들 data에 dict 타입으로 저장
         data = {
             'point': point,
             'total_post_count': total_post_count,
             'onelab_count': onelab_count,
         }
-
+        # 글 작성 페이지 이동, data함께 전달
         return render(request, 'share/write.html', data)
 
     @transaction.atomic
     def post(self, request):
+        # 회면에서 post로 받아온 데이터를 data에 저장
         data = request.POST
         # input 태그 하나에 여러 파일일 때(multiple), getlist('{input태그 name값}')
+        # 파일이 여러개 이므로 getlist로 가져와서 files에 따로 저장
         file = request.FILES
 
         # input 태그 하나 당 파일 1개 일 떄
         # file = request.FILES
 
-        # school = Member(**request.session['member'])
-
+        # 로그인 되어있는 회원 -> member
         member = University.objects.get(member_id=request.session['member']['id'])
 
+        # 위에서 받아온 data의 name을 사용하여 맞는 데이터들을 dict타입의 data로 선언
         data = {
             'share_title': data['share-title'],
             'share_points': data['share-points'],
@@ -258,57 +306,80 @@ class ShareWriteView(View):
             'university': member,
         }
 
+        # 작성 된 글 insert
         share = Share.objects.create(**data)
 
+        # 가져온 파일들 하나씩 반복
         for key, file in file.items():
+            # 업로드된 파일을 File 모델에 저장
             file_instance = File.objects.create(file_size=file.size)
+            # 만든 파일 객체를 PlaceLike 모델에 저장
             ShareFile.objects.create(share=share, file=file_instance, path=file)
 
+        # 작성한 게시글의 상세보기 페이지로 이동
         return redirect(reverse('share:detail', kwargs={'id': share.id}))
 
-
+# 파일 다운로드 시에 들어오는 view
 class ShareDownloadView(View):
     def get(self, request, file_path, *args, **kwargs):
+        # 파일 경로에서 파일 이름 추출
         file_name = file_path.split('/')[-1]
-        file_path = file_path
 
-        # print(file_path, file_name)
-        # file_path: 파일이 있는 경로 설정, 경로에 파일 이름 포함 가능
+        # 파일 시스템 스토리지 인스턴스 생성
         fs = FileSystemStorage()
-        # fs.open("파일 이름", 'rb')
+
+        # 파일의 MIME 타입 추측
         content_type, _ = mimetypes.guess_type(file_name)
+        # 파일 응답 생성
         response = FileResponse(fs.open(file_path, 'rb'),
                                 content_type=content_type)
+        # 다운로드 시 파일 이름으로 설정
         response['Content-Disposition'] = f'attachment; filename="{file_name}"'
 
+        # 응답
         return response
 
-
+# 수정하기 시에 들어오는 view
 class ShareUpdateView(View):
+    # 글 수정하기 페이지 들어올 때, 해당 게시글의 id함께 받아옴
+    @transaction.atomic
     def get(self, request, id):
+        # 로그인 된 회원 -> member -> university_member
         member = Member.objects.get(id=request.session['member']['id'])
         university_member = University.objects.get(member=member)
 
-        # 마이 포인트
+        # 마이 포인트 계산
+        # member=member이고 point_status=3인 point객체가 있다면
         if len(list(Point.objects.filter(member=member, point_status=3))) > 0:
+            # Sum과 aggregate함수를 이용하여 해당 포인트들의 합을 구한 뒤, point로 선언
             point = Point.objects.filter(member=member, point_status=3).aggregate(Sum('point'))['point__sum']
         else:
+            # 로그인 한 회원의 포인트 내역이 없다면, insert
             point = Point.objects.create(member=member, point_status=3)
 
         # 마이 포스트 수
+        # 로그인 한 회원이 작성한 글 수 구하기
+        # 자료글
         share_post_count = Share.enabled_objects.filter(university=university_member).count()
-        community_post_count = Community.objects.filter(
-            member=member).count()  # community, onelab도 enabled_objects로 바꾸기
-        onelab_post_count = OneLab.objects.filter(university=university_member).count()
+        # 커뮤니티 글
+        community_post_count = Community.enabled_objects.filter(
+            member=member).count()
+        # 원랩 글
+        onelab_post_count = OneLab.enabled_objects.filter(university=university_member).count()
+        # 집계함수를 통해 구한 글들 모두 합한 총 개수 -> total_post_count로 선언
         total_post_count = share_post_count + community_post_count + onelab_post_count
 
         # 마이 원랩 수
+        # 회원이 들어가 있는 원랩 전부 가져오기
         onelabs = OneLab.objects.filter(university=university_member)
+        # 집계함수를 이용 -> 총 개수 onelab_count로 선언
         onelab_count = onelabs.count()
 
+        # 전달받은 id이용 -> 수정하는 place객체 가져와서 post로 선언
         post = Share.objects.get(id=id)
         # update_url 생성
         update_url = reverse('share:update', args=[id])
+        # 위에서 가져온 데이터들 dict 타입으로 context에 저장
         context = {
             'share': post,
             'share_files': list(post.sharefile_set.all()),
@@ -317,14 +388,17 @@ class ShareUpdateView(View):
             'total_post_count': total_post_count,
             'onelab_count': onelab_count,
         }
+        # 수정하기 페이지로 이동, context함께 전달
         return render(request, 'share/update.html', context)
 
+    # 수정 완료 시
     def post(self, request, id):
+        # post방식으로 받아온 데이터들 data로 선언
         data = request.POST
-        # share_id = data['id']
         # 기존의 Share 객체 가져오기
         share = Share.objects.get(id=id)
 
+        # 가져온 name값으로 가져온 데이터들 모두 update하기
         share.share_title = data['share-title']
         share.share_content = data['share-content']
         share.share_choice_major = data['share-choice-major']
@@ -354,29 +428,37 @@ class ShareUpdateView(View):
             file_instance = File.objects.create(file_size=file.size)
             ShareFile.objects.create(share=share, file=file_instance, path=file)
 
+        # 수정된 share글 의 상세 페이지로 이동
         return redirect(share.get_absolute_url())
 
-
+# 삭제하기 view
 class ShareDeleteView(View):
     def get(self, request):
+        # 해당 게시글 soft_delete 방식으로 post_status를 False로 update
         share_id = request.GET['id']
         Share.objects.filter(id=share_id).update(share_post_status=False)  # 수정
+        # 삭제 후에는 리스트 페이지로 이동
         return redirect('/share/list')
 
-
+# 게시글 리스트 view
 class ShareListView(View):
     def get(self, request):
+        # 게시글 리스트 페이지 이동
         return render(request, 'share/list.html')
 
-
+# rest방식의 리스트 view
 class ShareListAPIView(APIView):
     @transaction.atomic
     def get(self, request, page):
+        # 한 페이지에 보여줄 장소의 개수와 페이지
         row_count = 12
 
+        # 시작 번호 -> offset
         offset = (page - 1) * row_count
+        # 끝 번호 -> limit
         limit = page * row_count
 
+        # 가져올 데이터들 먼저 리스트에 담기
         datas = [
             'id',
             'share_title',
@@ -390,42 +472,62 @@ class ShareListAPIView(APIView):
         ]
 
         # 학년 필터
+        # default는 전체 학년
         grade_sort = request.GET.get('gradeSort', 'all')
+        # 전달된 정렬 방식이 전체일 경우
         if grade_sort == 'all':
+            # 모든 자료글 가져오기
             shares = Share.enabled_objects.all()
         else:
+            # 해당 학년에 속하는 글만 가져오기
             shares = Share.enabled_objects.filter(share_choice_grade__contains=grade_sort)
 
         # 학과 필터
+        # default는 전체
         major_sort = request.GET.get('majorSort', 'all')
+        # 전체가 아닐 경우, 해당된 학과에 속한 글만 가져오기
         if major_sort != 'all':
             shares = shares.filter(share_choice_major__contains=major_sort)
 
         # 인기순 필터
+        # default는 최신순
         sort_order = request.GET.get('sortOrder', 'latest')
+        # 최신순이 아닐경우
         if sort_order != 'latest':
+            # 좋아요 수를 Count를 이용하여 계산한뒤 share_like_count로 별칭
+            # 좋아요 수가 많은 순으로, 같다면 최신순으로 정렬
             shares = shares.annotate(share_like_count=Count('sharelike')).order_by('-share_like_count', '-id')
         else:
+            # 최신순일 경우
             shares = shares.annotate(share_like_count=Count('sharelike')).order_by('-id')
 
+        # 필터링 된 자료글들에 작성자 이름과, 학교명에 별칭
+        # 리스트에 담아뒀던 data들 넣어주기
         shares = shares.annotate(member_name=F('university__member__member_name'),
                                  university_name=F('university__university_member_school')) \
             .values(*datas)
+        # 필터링 된 게시글 개수
         share_count = shares.count()
+        # 시작~끝에 해당되는 게시글만 가져오기
         shares = shares[offset:limit]
 
         # 다음 페이지가 있는지 계산
         has_next = share_count > offset + limit
 
+        # response할 데이터 담기
         share_info = {
             'shares': [],
             'hasNext': has_next,
             'member_like': {},
         }
 
+        # 자료 하나씩 반복
         for share in shares:
+            # 자료의 id
             share_one_id = share['id']
+            # 자료의 id이용하여 글 객체 1개 가져오기 -> share_one
             share_one = Share.objects.get(id=share_one_id)
+            # 자료글과 연관된 파일들 가져오기 -> share_files
             share_files = share_one.sharefile_set.all()
 
             # 자료공유 파일 데이터를 리스트에 추가
@@ -433,8 +535,8 @@ class ShareListAPIView(APIView):
             for file in share_files:
                 file_info = {
                     'id': file.pk,
-                    'path': file.path.url,  # 파일의 경로를 나타내는 속성
-                    'file_extension': file.path.url.split('.')[-1].lower()
+                    'path': file.path.url,  # 파일의 경로
+                    'file_extension': file.path.url.split('.')[-1].lower()  # 확장자
                 }
                 share_file_info.append(file_info)
 
@@ -442,42 +544,51 @@ class ShareListAPIView(APIView):
             share['share_files'] = share_file_info
 
             # 회원이 좋아요를 한 상태인지
+            # 로그인 된 회원 객체 -> member
             member = Member.objects.get(id=request.session['member']['id'])
 
-            # 해당 장소에 대한 회원의 좋아요 여부 확인
+            # 해당 자료에 대한 회원의 좋아요 여부 확인
             try:
                 like_object = ShareLike.objects.get(like__member=member, like__like_status=True, share=share_one)
                 share_info['member_like'][share_one_id] = True
             except ShareLike.DoesNotExist:
                 share_info['member_like'][share_one_id] = False
 
-            # 리뷰 정보를 review_info에 추가
             share_info['shares'].append(share)
 
+        # 자료 데이터 응답
         return Response(share_info)
 
-
+# 리뷰리스트 view
 class ShareReviewListView(View):
     def get(self, request):
         # URL에서 전달된 ID 값 가져오기
         share_id = request.GET.get('share_id')
-        # 가져온 ID를 이용하여 해당하는 데이터 가져오기
+        # 가져온 ID를 이용하여 해당하는 게시글 -> post로 선언
         post = Share.objects.get(id=share_id)
-        # 좋아요 수
+        # 좋아요 수 -> share_like_count로 선언
         share_like_count = ShareLike.objects.filter(share=post).count()
 
         # 파일
         share = Share.objects.get(id=share_id)
         share_file = ShareFile.objects.filter(share=share).first()
+        # 확장자
         share_file_extension = share_file.file_extension
 
         # 원랩 수
         share_member = University.objects.get(member=share.university)
+        # 집계함수 이용 -> 작성자가 속해있는 원랩 수
+        # 원랩장인 경우
         onelab_manager_count = OneLab.objects.filter(university=share_member).count()
+        # 원랩 멤버인 경우
         onelab_member_count = OneLabMember.objects.filter(university=share_member).count()
+        # 총 원랩 수
         total_onelab_count = onelab_manager_count + onelab_member_count
 
+        # 상세 페이지 내에 들어갈 작성자의 글
+        # 작성자가 현재 게시글(post)의 작성자와 같은 글들 중, 삭제되지 않은 글들만 최신순으로 가져오기
         post_list = Share.enabled_objects.filter(university=share_member).order_by('-id')
+        # Paginator를 사용하여 최신글 4개만 가져와서 posts로 선언
         page = request.GET.get('page', 1)
         paginator = Paginator(post_list, 4)
         posts = paginator.page(page)
@@ -490,16 +601,19 @@ class ShareReviewListView(View):
             try:
                 # 해당 Like 객체를 가져옵니다.
                 like_object = Like.objects.get(member=member, like_status=True, id=share_like.like_id)
-                # 예외가 발생하지 않았으므로, 해당 Like 객체가 존재합니다.
+                # 해당 Like 객체가 존재
+                # 로그인된 회원이 해당 게시글에 좋아요를 한 상태이므로, member_like를 True로 변경
                 member_like = True
             except Like.DoesNotExist:
-                # 해당 Like 객체가 존재하지 않습니다.
+                # 해당 Like 객체가 존재하지 않을경우
                 member_like = False
 
+        # 해당 회원의 프로필이미지 가져오기
         profile = MemberFile.objects.filter(member=share_member.member)
         if profile:
             profile = profile[0]
 
+        # 페이지 이동 시, 함께 전달해야할 데이터들 postData에 dict타입으로 저장
         post_data = {
             'share_id': post.id,
             'share_title': post.share_title,
@@ -521,17 +635,23 @@ class ShareReviewListView(View):
             'profile': profile.path,
         }
 
+        # 리뷰 페이지 이동, post_data 함께 전달
         return render(request, 'share/review.html', post_data)
 
-
+# rest방식의 리뷰리스트 view
 class ShareReviewListAPIView(APIView):
+    # 게시글 id와 page 함께 받음
     @transaction.atomic
     def get(self, request, share_id, page):
+        # 한페이지에 5개씩 보여주기 위해 row_count = 5로 선언
         row_count = 5
 
+        # 시작 번호 -> offset
         offset = (page - 1) * row_count
+        # 끝 번호 -> limit
         limit = page * row_count
 
+        # 리뷰페이지에 필요한 데이터들 datas에 저장
         datas = [
             'review__id',
             'review__review_content',
@@ -542,17 +662,24 @@ class ShareReviewListAPIView(APIView):
             'review__created_date',
         ]
 
-        # 정렬 방식에 따라 쿼리셋을 정렬
+        # 정렬 방식에 따라 쿼리셋을 정렬(초기에는 latest/최신순 정렬)
         sort = request.GET.get('sort', 'latest')
+        # 전달받은 정렬 방식이 별점 높은 순일 경우
         if sort == 'highest_rating':
+            # 해당되는 리뷰글을 가져온다(시작~끝에 해당되는 글만)
+            # 리뷰를 작성한 member의 이름에는 annotate를 사용하여 별칭을 붙여준다
+            # 리뷰글에 필요한 값은 위에서 먼저 담아놓은 datas
+            # 정렬은 평점순 -> 같다면 최신순
             reviews = ShareReview.enabled_objects.filter(share_id=share_id).annotate(
                 member_name=F('review__member__member_name')) \
                 .values(*datas).order_by('-review__review_rating', '-review__created_date')
+        # 전달받은 정렬 방식이 별점 낮은 순일 경우
         elif sort == 'lowest_rating':
             reviews = ShareReview.enabled_objects.filter(share_id=share_id).annotate(
                 member_name=F('review__member__member_name')) \
                 .values(*datas).order_by('review__review_rating', '-review__created_date')
-        else:  # default to latest
+        # 전달받은 정렬 방식이 최신순일 경우
+        else:
             reviews = ShareReview.enabled_objects.filter(share_id=share_id).annotate(
                 member_name=F('review__member__member_name')) \
                 .values(*datas).order_by('-review__created_date')
@@ -584,19 +711,26 @@ class ShareReviewListAPIView(APIView):
             'review_count': total_review_count,  # 전체 리뷰 개수 사용
             'review_avg': float(review_avg_rounded),  # 반올림된 값
         }
+        # 가져온 리뷰들 하나씩 반복
         for review in reviews:
+            # 리뷰의 id
             review_one_id = review['review__id']
+            # 해당 리뷰 id로 리뷰 객체 가져오기
             review_one = Review.objects.get(id=review_one_id)
+            # 해당 리뷰 객체와 연관되어있는 파일들 가져오기
             review_files = review_one.reviewfile_set.all()
+            # 리뷰를 작성한 member의 id
             member_one_id = review['review__member']
+            # 해당 member의 프로필이미지 가져오기
             member_profiles = MemberFile.objects.filter(member_id=member_one_id)
 
             # 리뷰 파일 데이터를 리스트에 추가
             review_file_info = []
             for file in review_files:
+                # file_info에는 id와 path가 저장됨
                 file_info = {
                     'id': file.pk,
-                    'path': file.path.url  # 파일의 경로를 나타내는 속성
+                    'path': file.path.url  # 파일의 경로
                 }
                 review_file_info.append(file_info)
 
@@ -607,7 +741,7 @@ class ShareReviewListAPIView(APIView):
             profile_file_info = []
             for profile in member_profiles:
                 profile_info = {
-                    'path': profile.path.url
+                    'path': profile.path.url     # 파일의 경로
                 }
                 profile_file_info.append(profile_info)
 
@@ -616,4 +750,5 @@ class ShareReviewListAPIView(APIView):
             # 리뷰 정보를 review_info에 추가
             review_info['reviews'].append(review)
 
+        # 해당 리뷰 전체 응답
         return Response(review_info)

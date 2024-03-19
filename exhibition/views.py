@@ -92,8 +92,8 @@ class ExhibitionListView(View):
     def get(self, request):
         member = Member(**request.session['member'])
         context = {
-            'exhibitions' : list(Exhibition.enabled_objects.all()),
-            'member' : member
+            'exhibitions': list(Exhibition.enabled_objects.all()),
+            'member': member
         }
 
         return render(request, 'exhibition/list.html', context)
