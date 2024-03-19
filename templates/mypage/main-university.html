@@ -5,6 +5,7 @@
     <link rel="icon" type="image/png" sizes="16x16" href="{% static 'myPage/images/favicon-16x16.png' %}">
     <link rel="stylesheet" href="{% static 'myPage/css/school-exhibit-list.css'%}">
     <link rel="stylesheet" href="{% static 'myPage/css/my-page-body.css' %}">
+     <link rel="stylesheet" href="{% static 'css/main/main-page.css' %}" />
     <style>
         .profile {
             width: 100%;
@@ -17,7 +18,7 @@
             justify-content: center;
             margin-top: 20px;
         }
-    
+
         .step-links a {
             padding: 10px;
             margin: 0 5px;
@@ -28,7 +29,7 @@
             background-color: #ffffff;
             cursor: pointer;
         }
-    
+
         .step-links .current {
             padding: 10px;
             margin: 0 5px;
@@ -37,7 +38,7 @@
             background-color: #008244;
             color: #fff;
         }
-    
+
         .step-links a:hover {
             background-color:  #E8F5E9;
         }
@@ -51,7 +52,7 @@
         align-items: center;
         justify-content: center;
     }
-    
+
     .search-result-inner-inner span {
         height: 70%;
         display: flex;
@@ -62,7 +63,7 @@
         border-radius: 10px;
         color: #fff;
     }
-    
+
     .search-result-inner-inner span:hover {
         background-color: #00592e
     }
@@ -120,7 +121,7 @@
                                                 aria-label="프로필 상세 보기"
                                                 data-event="profile"
                                                 >
-                                            
+
                                               {% if profile.path is None or profile.path == '' %}
                                                     <img class="profile" src="{% static 'myPage/images/profile.jpg' %}">
                                               {% else %}
@@ -128,7 +129,7 @@
                                               {% endif %}
                                             <input type="file" name="profile" style="display: none">
                                             </button>
-                                        
+
                                             <button
                                                 type="button"
                                                 class="user-profile-edit-profile"
@@ -147,7 +148,7 @@
                                                     ></path>
                                                 </svg>
                                             </button>
-                                        </label>    
+                                        </label>
                                     </div>
                                     <div class="user-profile-profile">
                                         <button
@@ -305,124 +306,123 @@
                                                             <div
                                                                 class="my-page-project-info-titleinfo"
                                                             >
-                                                                <svg
-                                                                    class="withIcon-icon"
-                                                                    xmlns="http://www.w3.org/2000/svg"
-                                                                    xmlns:xlink="http://www.w3.org/1999/xlink"
-                                                                    width="256"
-                                                                    height="256"
-                                                                    viewBox="0 0 256 256"
-                                                                    version="1.1"
-                                                                    xml:space="preserve"
-                                                                >
-                                                                    <g
-                                                                        style="
-                                                                            stroke: none;
-                                                                            stroke-width: 0;
-                                                                            stroke-dasharray: none;
-                                                                            stroke-linecap: butt;
-                                                                            stroke-linejoin: miter;
-                                                                            stroke-miterlimit: 10;
-                                                                            fill: none;
-                                                                            fill-rule: nonzero;
-                                                                            opacity: 1;
-                                                                        "
-                                                                        transform="translate(1.4065934065934016 1.4065934065934016) scale(2.81 2.81)"
-                                                                    >
-                                                                        <path
-                                                                            d="M 75.546 78.738 H 14.455 C 6.484 78.738 0 72.254 0 64.283 V 25.716 c 0 -7.97 6.485 -14.455 14.455 -14.455 h 61.091 c 7.97 0 14.454 6.485 14.454 14.455 v 38.567 C 90 72.254 83.516 78.738 75.546 78.738 z M 14.455 15.488 c -5.64 0 -10.228 4.588 -10.228 10.228 v 38.567 c 0 5.64 4.588 10.229 10.228 10.229 h 61.091 c 5.64 0 10.228 -4.589 10.228 -10.229 V 25.716 c 0 -5.64 -4.588 -10.228 -10.228 -10.228 H 14.455 z"
-                                                                            style="
-                                                                                stroke: none;
-                                                                                stroke-width: 1;
-                                                                                stroke-dasharray: none;
-                                                                                stroke-linecap: butt;
-                                                                                stroke-linejoin: miter;
-                                                                                stroke-miterlimit: 10;
-                                                                                fill: #008243;
-                                                                                fill-rule: nonzero;
-                                                                                opacity: 1;
-                                                                            "
-                                                                            transform=" matrix(1 0 0 1 0 0) "
-                                                                            stroke-linecap="round"
-                                                                        />
-                                                                        <path
-                                                                            d="M 11.044 25.917 C 21.848 36.445 32.652 46.972 43.456 57.5 c 2.014 1.962 5.105 -1.122 3.088 -3.088 C 35.74 43.885 24.936 33.357 14.132 22.83 C 12.118 20.867 9.027 23.952 11.044 25.917 L 11.044 25.917 z"
-                                                                            style="
-                                                                                stroke: none;
-                                                                                stroke-width: 1;
-                                                                                stroke-dasharray: none;
-                                                                                stroke-linecap: butt;
-                                                                                stroke-linejoin: miter;
-                                                                                stroke-miterlimit: 10;
-                                                                                fill: #008243;
-                                                                                fill-rule: nonzero;
-                                                                                opacity: 1;
-                                                                            "
-                                                                            transform=" matrix(1 0 0 1 0 0) "
-                                                                            stroke-linecap="round"
-                                                                        />
-                                                                        <path
-                                                                            d="M 46.544 57.5 c 10.804 -10.527 21.608 -21.055 32.412 -31.582 c 2.016 -1.965 -1.073 -5.051 -3.088 -3.088 C 65.064 33.357 54.26 43.885 43.456 54.412 C 41.44 56.377 44.529 59.463 46.544 57.5 L 46.544 57.5 z"
-                                                                            style="
-                                                                                stroke: none;
-                                                                                stroke-width: 1;
-                                                                                stroke-dasharray: none;
-                                                                                stroke-linecap: butt;
-                                                                                stroke-linejoin: miter;
-                                                                                stroke-miterlimit: 10;
-                                                                                fill: #008243;
-                                                                                fill-rule: nonzero;
-                                                                                opacity: 1;
-                                                                            "
-                                                                            transform=" matrix(1 0 0 1 0 0) "
-                                                                            stroke-linecap="round"
-                                                                        />
-                                                                        <path
-                                                                            d="M 78.837 64.952 c -7.189 -6.818 -14.379 -13.635 -21.568 -20.453 c -2.039 -1.933 -5.132 1.149 -3.088 3.088 c 7.189 6.818 14.379 13.635 21.568 20.453 C 77.788 69.973 80.881 66.89 78.837 64.952 L 78.837 64.952 z"
-                                                                            style="
-                                                                                stroke: none;
-                                                                                stroke-width: 1;
-                                                                                stroke-dasharray: none;
-                                                                                stroke-linecap: butt;
-                                                                                stroke-linejoin: miter;
-                                                                                stroke-miterlimit: 10;
-                                                                                fill: #008243;
-                                                                                fill-rule: nonzero;
-                                                                                opacity: 1;
-                                                                            "
-                                                                            transform=" matrix(1 0 0 1 0 0) "
-                                                                            stroke-linecap="round"
-                                                                        />
-                                                                        <path
-                                                                            d="M 14.446 68.039 c 7.189 -6.818 14.379 -13.635 21.568 -20.453 c 2.043 -1.938 -1.048 -5.022 -3.088 -3.088 c -7.189 6.818 -14.379 13.635 -21.568 20.453 C 9.315 66.889 12.406 69.974 14.446 68.039 L 14.446 68.039 z"
-                                                                            style="
-                                                                                stroke: none;
-                                                                                stroke-width: 1;
-                                                                                stroke-dasharray: none;
-                                                                                stroke-linecap: butt;
-                                                                                stroke-linejoin: miter;
-                                                                                stroke-miterlimit: 10;
-                                                                                fill: #008243;
-                                                                                fill-rule: nonzero;
-                                                                                opacity: 1;
-                                                                            "
-                                                                            transform=" matrix(1 0 0 1 0 0) "
-                                                                            stroke-linecap="round"
-                                                                        />
-                                                                    </g>
-                                                                </svg>
+{#                                                                <svg#}
+{#                                                                    class="withIcon-icon"#}
+{#                                                                    xmlns="http://www.w3.org/2000/svg"#}
+{#                                                                    xmlns:xlink="http://www.w3.org/1999/xlink"#}
+{#                                                                    width="256"#}
+{#                                                                    height="256"#}
+{#                                                                    viewBox="0 0 256 256"#}
+{#                                                                    version="1.1"#}
+{#                                                                    xml:space="preserve"#}
+{#                                                                >#}
+{#                                                                    <g#}
+{#                                                                        style="#}
+{#                                                                            stroke: none;#}
+{#                                                                            stroke-width: 0;#}
+{#                                                                            stroke-dasharray: none;#}
+{#                                                                            stroke-linecap: butt;#}
+{#                                                                            stroke-linejoin: miter;#}
+{#                                                                            stroke-miterlimit: 10;#}
+{#                                                                            fill: none;#}
+{#                                                                            fill-rule: nonzero;#}
+{#                                                                            opacity: 1;#}
+{#                                                                        "#}
+{#                                                                        transform="translate(1.4065934065934016 1.4065934065934016) scale(2.81 2.81)"#}
+{#                                                                    >#}
+{#                                                                        <path#}
+{#                                                                            d="M 75.546 78.738 H 14.455 C 6.484 78.738 0 72.254 0 64.283 V 25.716 c 0 -7.97 6.485 -14.455 14.455 -14.455 h 61.091 c 7.97 0 14.454 6.485 14.454 14.455 v 38.567 C 90 72.254 83.516 78.738 75.546 78.738 z M 14.455 15.488 c -5.64 0 -10.228 4.588 -10.228 10.228 v 38.567 c 0 5.64 4.588 10.229 10.228 10.229 h 61.091 c 5.64 0 10.228 -4.589 10.228 -10.229 V 25.716 c 0 -5.64 -4.588 -10.228 -10.228 -10.228 H 14.455 z"#}
+{#                                                                            style="#}
+{#                                                                                stroke: none;#}
+{#                                                                                stroke-width: 1;#}
+{#                                                                                stroke-dasharray: none;#}
+{#                                                                                stroke-linecap: butt;#}
+{#                                                                                stroke-linejoin: miter;#}
+{#                                                                                stroke-miterlimit: 10;#}
+{#                                                                                fill: #008243;#}
+{#                                                                                fill-rule: nonzero;#}
+{#                                                                                opacity: 1;#}
+{#                                                                            "#}
+{#                                                                            transform=" matrix(1 0 0 1 0 0) "#}
+{#                                                                            stroke-linecap="round"#}
+{#                                                                        />#}
+{#                                                                        <path#}
+{#                                                                            d="M 11.044 25.917 C 21.848 36.445 32.652 46.972 43.456 57.5 c 2.014 1.962 5.105 -1.122 3.088 -3.088 C 35.74 43.885 24.936 33.357 14.132 22.83 C 12.118 20.867 9.027 23.952 11.044 25.917 L 11.044 25.917 z"#}
+{#                                                                            style="#}
+{#                                                                                stroke: none;#}
+{#                                                                                stroke-width: 1;#}
+{#                                                                                stroke-dasharray: none;#}
+{#                                                                                stroke-linecap: butt;#}
+{#                                                                                stroke-linejoin: miter;#}
+{#                                                                                stroke-miterlimit: 10;#}
+{#                                                                                fill: #008243;#}
+{#                                                                                fill-rule: nonzero;#}
+{#                                                                                opacity: 1;#}
+{#                                                                            "#}
+{#                                                                            transform=" matrix(1 0 0 1 0 0) "#}
+{#                                                                            stroke-linecap="round"#}
+{#                                                                        />#}
+{#                                                                        <path#}
+{#                                                                            d="M 46.544 57.5 c 10.804 -10.527 21.608 -21.055 32.412 -31.582 c 2.016 -1.965 -1.073 -5.051 -3.088 -3.088 C 65.064 33.357 54.26 43.885 43.456 54.412 C 41.44 56.377 44.529 59.463 46.544 57.5 L 46.544 57.5 z"#}
+{#                                                                            style="#}
+{#                                                                                stroke: none;#}
+{#                                                                                stroke-width: 1;#}
+{#                                                                                stroke-dasharray: none;#}
+{#                                                                                stroke-linecap: butt;#}
+{#                                                                                stroke-linejoin: miter;#}
+{#                                                                                stroke-miterlimit: 10;#}
+{#                                                                                fill: #008243;#}
+{#                                                                                fill-rule: nonzero;#}
+{#                                                                                opacity: 1;#}
+{#                                                                            "#}
+{#                                                                            transform=" matrix(1 0 0 1 0 0) "#}
+{#                                                                            stroke-linecap="round"#}
+{#                                                                        />#}
+{#                                                                        <path#}
+{#                                                                            d="M 78.837 64.952 c -7.189 -6.818 -14.379 -13.635 -21.568 -20.453 c -2.039 -1.933 -5.132 1.149 -3.088 3.088 c 7.189 6.818 14.379 13.635 21.568 20.453 C 77.788 69.973 80.881 66.89 78.837 64.952 L 78.837 64.952 z"#}
+{#                                                                            style="#}
+{#                                                                                stroke: none;#}
+{#                                                                                stroke-width: 1;#}
+{#                                                                                stroke-dasharray: none;#}
+{#                                                                                stroke-linecap: butt;#}
+{#                                                                                stroke-linejoin: miter;#}
+{#                                                                                stroke-miterlimit: 10;#}
+{#                                                                                fill: #008243;#}
+{#                                                                                fill-rule: nonzero;#}
+{#                                                                                opacity: 1;#}
+{#                                                                            "#}
+{#                                                                            transform=" matrix(1 0 0 1 0 0) "#}
+{#                                                                            stroke-linecap="round"#}
+{#                                                                        />#}
+{#                                                                        <path#}
+{#                                                                            d="M 14.446 68.039 c 7.189 -6.818 14.379 -13.635 21.568 -20.453 c 2.043 -1.938 -1.048 -5.022 -3.088 -3.088 c -7.189 6.818 -14.379 13.635 -21.568 20.453 C 9.315 66.889 12.406 69.974 14.446 68.039 L 14.446 68.039 z"#}
+{#                                                                            style="#}
+{#                                                                                stroke: none;#}
+{#                                                                                stroke-width: 1;#}
+{#                                                                                stroke-dasharray: none;#}
+{#                                                                                stroke-linecap: butt;#}
+{#                                                                                stroke-linejoin: miter;#}
+{#                                                                                stroke-miterlimit: 10;#}
+{#                                                                                fill: #008243;#}
+{#                                                                                fill-rule: nonzero;#}
+{#                                                                                opacity: 1;#}
+{#                                                                            "#}
+{#                                                                            transform=" matrix(1 0 0 1 0 0) "#}
+{#                                                                            stroke-linecap="round"#}
+{#                                                                        />#}
+{#                                                                    </g>#}
+{#                                                                </svg>#}
                                                                 <strong
                                                                     class="my-page-project-info-title"
                                                                     >대학생
-                                                                    인증</strong
+                                                                    회원</strong
                                                                 >
                                                                 <p
                                                                     class="my-page-project-info-description"
                                                                 >
-                                                                    대학생
-                                                                    인증하고,
-                                                                    원랩이
-                                                                    되어보세요!
+                                                                    상향 평준화 교육의 중심,
+                                                                    원랩과
+                                                                    함께하세요!
                                                                 </p>
                                                             </div>
                                                         </div>
@@ -552,268 +552,17 @@
                                     style="display: block"
                                 >
                                     <!-- 박스를 감싸고 있는 컨테이너 -->
-                                    <div class="onelab-service-boxs col-4">
-                                        <div class="onelab-service-boxs-inner">
-                                            <button class="manage-onelab-btn">
-                                                <span
-                                                    class="manage-onelab-icon"
-                                                    aria-hidden="true"
-                                                    ><svg
-                                                        viewBox="0 0 32 32"
-                                                        focusable="false"
-                                                        role="presentation"
-                                                        class="withIcon-icon"
-                                                        aria-hidden="true"
-                                                    >
-                                                        <path
-                                                            d="M17.84 3.2l.4 2.56.16.88.88.32a9.55 9.55 0 0 1 2.893 1.691l.707.549.88-.32 2.4-.88L28 11.2l-2 1.68-.72.56.16.88a9.022 9.022 0 0 1-.009 3.336l-.151.824.72.56 2 1.76-1.84 3.2-3.28-1.2-.72.56a9.485 9.485 0 0 1-2.814 1.658l-.946.342-.16.88-.4 2.56h-3.68l-.4-2.56-.16-.88-.88-.32a9.55 9.55 0 0 1-2.893-1.691L9.12 22.8l-.88.32-2.4.88L4 20.8l2-1.68.72-.56-.16-.88a9.022 9.022 0 0 1 .009-3.336l.151-.824-.72-.56-2-1.76L5.84 8l3.28 1.2.72-.56a9.485 9.485 0 0 1 2.814-1.658l.946-.342.16-.88.4-2.56h3.68zM16 21.6a5.6 5.6 0 1 0 0-11.2 5.6 5.6 0 0 0 0 11.2zm2.56-20h-5.136a.8.8 0 0 0-.783.635L12.08 5.44a11.21 11.21 0 0 0-3.292 2.011L5.76 6.24h-.267a.798.798 0 0 0-.691.397L2.24 10.961a.798.798 0 0 0 .238 1.038l2.562 2.082a10.647 10.647 0 0 0 .01 3.906l-2.57 2.014a.8.8 0 0 0-.158 1.044L4.8 25.362a.8.8 0 0 0 .693.4h.347l2.96-1.2c.956.798 2.07 1.448 3.282 1.895l.638 3.225c.077.368.399.64.784.64h5.072a.8.8 0 0 0 .783-.635l.561-3.205a11.212 11.212 0 0 0 3.296-1.934l3.024 1.134h.347a.798.798 0 0 0 .691-.397l2.562-4.404a.8.8 0 0 0-.159-1.039l-2.561-2.081a10.647 10.647 0 0 0-.01-3.906l2.41-1.854a.8.8 0 0 0 .158-1.044L27.2 6.64a.8.8 0 0 0-.693-.4h-.347l-2.96 1.2a11.163 11.163 0 0 0-3.282-1.895L19.28 2.32a.801.801 0 0 0-.784-.64h-.017zM16 20a4 4 0 1 1 0-8 4 4 0 0 1 0 8z"
-                                                        ></path>
-                                                    </svg>
-                                                </span>
-                                                관리하기
-                                            </button>
-                                            <dl class="onelab-service-detail">
-                                                <dd class="box-icon">
-                                                    <i
-                                                        class="icon-maker-service"
-                                                    ></i>
-                                                </dd>
-                                                <dd class="box-title">
-                                                    <strong
-                                                        >강남 IT
-                                                        아카데미</strong
-                                                    >
-                                                </dd>
-                                                <dd class="box-text">
-                                                    우리 브랜드의 팬을 모으고
-                                                    빠르게 새소식을 알릴 수
-                                                    있어요.
-                                                </dd>
-                                                <dd class="box-last"></dd>
-                                            </dl>
-                                        </div>
-                                        <div class="onelab-service-boxs-inner">
-                                            <button class="manage-onelab-btn">
-                                                <span
-                                                    class="manage-onelab-icon"
-                                                    aria-hidden="true"
-                                                    ><svg
-                                                        viewBox="0 0 32 32"
-                                                        focusable="false"
-                                                        role="presentation"
-                                                        class="withIcon-icon"
-                                                        aria-hidden="true"
-                                                    >
-                                                        <path
-                                                            d="M17.84 3.2l.4 2.56.16.88.88.32a9.55 9.55 0 0 1 2.893 1.691l.707.549.88-.32 2.4-.88L28 11.2l-2 1.68-.72.56.16.88a9.022 9.022 0 0 1-.009 3.336l-.151.824.72.56 2 1.76-1.84 3.2-3.28-1.2-.72.56a9.485 9.485 0 0 1-2.814 1.658l-.946.342-.16.88-.4 2.56h-3.68l-.4-2.56-.16-.88-.88-.32a9.55 9.55 0 0 1-2.893-1.691L9.12 22.8l-.88.32-2.4.88L4 20.8l2-1.68.72-.56-.16-.88a9.022 9.022 0 0 1 .009-3.336l.151-.824-.72-.56-2-1.76L5.84 8l3.28 1.2.72-.56a9.485 9.485 0 0 1 2.814-1.658l.946-.342.16-.88.4-2.56h3.68zM16 21.6a5.6 5.6 0 1 0 0-11.2 5.6 5.6 0 0 0 0 11.2zm2.56-20h-5.136a.8.8 0 0 0-.783.635L12.08 5.44a11.21 11.21 0 0 0-3.292 2.011L5.76 6.24h-.267a.798.798 0 0 0-.691.397L2.24 10.961a.798.798 0 0 0 .238 1.038l2.562 2.082a10.647 10.647 0 0 0 .01 3.906l-2.57 2.014a.8.8 0 0 0-.158 1.044L4.8 25.362a.8.8 0 0 0 .693.4h.347l2.96-1.2c.956.798 2.07 1.448 3.282 1.895l.638 3.225c.077.368.399.64.784.64h5.072a.8.8 0 0 0 .783-.635l.561-3.205a11.212 11.212 0 0 0 3.296-1.934l3.024 1.134h.347a.798.798 0 0 0 .691-.397l2.562-4.404a.8.8 0 0 0-.159-1.039l-2.561-2.081a10.647 10.647 0 0 0-.01-3.906l2.41-1.854a.8.8 0 0 0 .158-1.044L27.2 6.64a.8.8 0 0 0-.693-.4h-.347l-2.96 1.2a11.163 11.163 0 0 0-3.282-1.895L19.28 2.32a.801.801 0 0 0-.784-.64h-.017zM16 20a4 4 0 1 1 0-8 4 4 0 0 1 0 8z"
-                                                        ></path>
-                                                    </svg>
-                                                </span>
-                                                관리하기
-                                            </button>
-                                            <dl class="onelab-service-detail">
-                                                <dd class="box-icon">
-                                                    <i
-                                                        class="icon-maker-service"
-                                                    ></i>
-                                                </dd>
-                                                <dd class="box-title">
-                                                    <strong
-                                                        >강남 IT
-                                                        아카데미</strong
-                                                    >
-                                                </dd>
-                                                <dd class="box-text">
-                                                    우리 브랜드의 팬을 모으고
-                                                    빠르게 새소식을 알릴 수
-                                                    있어요.
-                                                </dd>
-                                                <dd class="box-last"></dd>
-                                            </dl>
-                                        </div>
-                                        <div class="onelab-service-boxs-inner">
-                                            <button class="manage-onelab-btn">
-                                                <span
-                                                    class="manage-onelab-icon"
-                                                    aria-hidden="true"
-                                                    ><svg
-                                                        viewBox="0 0 32 32"
-                                                        focusable="false"
-                                                        role="presentation"
-                                                        class="withIcon-icon"
-                                                        aria-hidden="true"
-                                                    >
-                                                        <path
-                                                            d="M17.84 3.2l.4 2.56.16.88.88.32a9.55 9.55 0 0 1 2.893 1.691l.707.549.88-.32 2.4-.88L28 11.2l-2 1.68-.72.56.16.88a9.022 9.022 0 0 1-.009 3.336l-.151.824.72.56 2 1.76-1.84 3.2-3.28-1.2-.72.56a9.485 9.485 0 0 1-2.814 1.658l-.946.342-.16.88-.4 2.56h-3.68l-.4-2.56-.16-.88-.88-.32a9.55 9.55 0 0 1-2.893-1.691L9.12 22.8l-.88.32-2.4.88L4 20.8l2-1.68.72-.56-.16-.88a9.022 9.022 0 0 1 .009-3.336l.151-.824-.72-.56-2-1.76L5.84 8l3.28 1.2.72-.56a9.485 9.485 0 0 1 2.814-1.658l.946-.342.16-.88.4-2.56h3.68zM16 21.6a5.6 5.6 0 1 0 0-11.2 5.6 5.6 0 0 0 0 11.2zm2.56-20h-5.136a.8.8 0 0 0-.783.635L12.08 5.44a11.21 11.21 0 0 0-3.292 2.011L5.76 6.24h-.267a.798.798 0 0 0-.691.397L2.24 10.961a.798.798 0 0 0 .238 1.038l2.562 2.082a10.647 10.647 0 0 0 .01 3.906l-2.57 2.014a.8.8 0 0 0-.158 1.044L4.8 25.362a.8.8 0 0 0 .693.4h.347l2.96-1.2c.956.798 2.07 1.448 3.282 1.895l.638 3.225c.077.368.399.64.784.64h5.072a.8.8 0 0 0 .783-.635l.561-3.205a11.212 11.212 0 0 0 3.296-1.934l3.024 1.134h.347a.798.798 0 0 0 .691-.397l2.562-4.404a.8.8 0 0 0-.159-1.039l-2.561-2.081a10.647 10.647 0 0 0-.01-3.906l2.41-1.854a.8.8 0 0 0 .158-1.044L27.2 6.64a.8.8 0 0 0-.693-.4h-.347l-2.96 1.2a11.163 11.163 0 0 0-3.282-1.895L19.28 2.32a.801.801 0 0 0-.784-.64h-.017zM16 20a4 4 0 1 1 0-8 4 4 0 0 1 0 8z"
-                                                        ></path>
-                                                    </svg>
-                                                </span>
-                                                관리하기
-                                            </button>
-                                            <dl class="onelab-service-detail">
-                                                <dd class="box-icon">
-                                                    <i
-                                                        class="icon-maker-service"
-                                                    ></i>
-                                                </dd>
-                                                <dd class="box-title">
-                                                    <strong
-                                                        >강남 IT
-                                                        아카데미</strong
-                                                    >
-                                                </dd>
-                                                <dd class="box-text">
-                                                    우리 브랜드의 팬을 모으고
-                                                    빠르게 새소식을 알릴 수
-                                                    있어요.
-                                                </dd>
-                                                <dd class="box-last"></dd>
-                                            </dl>
-                                        </div>
-                                        <div class="onelab-service-boxs-inner">
-                                            <button class="manage-onelab-btn">
-                                                <span
-                                                    class="manage-onelab-icon"
-                                                    aria-hidden="true"
-                                                    ><svg
-                                                        viewBox="0 0 32 32"
-                                                        focusable="false"
-                                                        role="presentation"
-                                                        class="withIcon-icon"
-                                                        aria-hidden="true"
-                                                    >
-                                                        <path
-                                                            d="M17.84 3.2l.4 2.56.16.88.88.32a9.55 9.55 0 0 1 2.893 1.691l.707.549.88-.32 2.4-.88L28 11.2l-2 1.68-.72.56.16.88a9.022 9.022 0 0 1-.009 3.336l-.151.824.72.56 2 1.76-1.84 3.2-3.28-1.2-.72.56a9.485 9.485 0 0 1-2.814 1.658l-.946.342-.16.88-.4 2.56h-3.68l-.4-2.56-.16-.88-.88-.32a9.55 9.55 0 0 1-2.893-1.691L9.12 22.8l-.88.32-2.4.88L4 20.8l2-1.68.72-.56-.16-.88a9.022 9.022 0 0 1 .009-3.336l.151-.824-.72-.56-2-1.76L5.84 8l3.28 1.2.72-.56a9.485 9.485 0 0 1 2.814-1.658l.946-.342.16-.88.4-2.56h3.68zM16 21.6a5.6 5.6 0 1 0 0-11.2 5.6 5.6 0 0 0 0 11.2zm2.56-20h-5.136a.8.8 0 0 0-.783.635L12.08 5.44a11.21 11.21 0 0 0-3.292 2.011L5.76 6.24h-.267a.798.798 0 0 0-.691.397L2.24 10.961a.798.798 0 0 0 .238 1.038l2.562 2.082a10.647 10.647 0 0 0 .01 3.906l-2.57 2.014a.8.8 0 0 0-.158 1.044L4.8 25.362a.8.8 0 0 0 .693.4h.347l2.96-1.2c.956.798 2.07 1.448 3.282 1.895l.638 3.225c.077.368.399.64.784.64h5.072a.8.8 0 0 0 .783-.635l.561-3.205a11.212 11.212 0 0 0 3.296-1.934l3.024 1.134h.347a.798.798 0 0 0 .691-.397l2.562-4.404a.8.8 0 0 0-.159-1.039l-2.561-2.081a10.647 10.647 0 0 0-.01-3.906l2.41-1.854a.8.8 0 0 0 .158-1.044L27.2 6.64a.8.8 0 0 0-.693-.4h-.347l-2.96 1.2a11.163 11.163 0 0 0-3.282-1.895L19.28 2.32a.801.801 0 0 0-.784-.64h-.017zM16 20a4 4 0 1 1 0-8 4 4 0 0 1 0 8z"
-                                                        ></path>
-                                                    </svg>
-                                                </span>
-                                                관리하기
-                                            </button>
-                                            <dl class="onelab-service-detail">
-                                                <dd class="box-icon">
-                                                    <i
-                                                        class="icon-maker-service"
-                                                    ></i>
-                                                </dd>
-                                                <dd class="box-title">
-                                                    <strong
-                                                        >강남 IT
-                                                        아카데미</strong
-                                                    >
-                                                </dd>
-                                                <dd class="box-text">
-                                                    우리 브랜드의 팬을 모으고
-                                                    빠르게 새소식을 알릴 수
-                                                    있어요.
-                                                </dd>
-                                                <dd class="box-last"></dd>
-                                            </dl>
-                                        </div>
+                                    <div class="onelab-service-boxs col-4 manage-onelab-container">
                                     </div>
                                 </div>
                                 <!-- 랩원 목록 ~ 전체 리스트들 감싸는 div -->
                                 <div class="section-body">
                                     <!-- 박스를 감싸고 있는 컨테이너 -->
-                                    <div class="onelab-service-boxs col-4">
-                                        <div class="onelab-service-boxs-inner">
-                                            <button class="exit-onelab-btn">
-                                                탈퇴하기
-                                            </button>
-                                            <dl class="onelab-service-detail">
-                                                <dd class="box-icon">
-                                                    <i
-                                                        class="icon-maker-service"
-                                                    ></i>
-                                                </dd>
-                                                <dd class="box-title">
-                                                    <strong
-                                                        >강남 IT
-                                                        아카데미</strong
-                                                    >
-                                                </dd>
-                                                <dd class="box-text">
-                                                    우리 브랜드의 팬을 모으고
-                                                    빠르게 새소식을 알릴 수
-                                                    있어요.
-                                                </dd>
-                                                <dd class="box-last"></dd>
-                                            </dl>
-                                        </div>
-                                        <div class="onelab-service-boxs-inner">
-                                            <button class="exit-onelab-btn">
-                                                탈퇴하기
-                                            </button>
-                                            <dl class="onelab-service-detail">
-                                                <dd class="box-icon">
-                                                    <i
-                                                        class="icon-maker-service"
-                                                    ></i>
-                                                </dd>
-                                                <dd class="box-title">
-                                                    <strong
-                                                        >강남 IT
-                                                        아카데미</strong
-                                                    >
-                                                </dd>
-                                                <dd class="box-text">
-                                                    우리 브랜드의 팬을 모으고
-                                                    빠르게 새소식을 알릴 수
-                                                    있어요.
-                                                </dd>
-                                                <dd class="box-last"></dd>
-                                            </dl>
-                                        </div>
-                                        <div class="onelab-service-boxs-inner">
-                                            <button class="exit-onelab-btn">
-                                                탈퇴하기
-                                            </button>
-                                            <dl class="onelab-service-detail">
-                                                <dd class="box-icon">
-                                                    <i
-                                                        class="icon-maker-service"
-                                                    ></i>
-                                                </dd>
-                                                <dd class="box-title">
-                                                    <strong
-                                                        >강남 IT
-                                                        아카데미</strong
-                                                    >
-                                                </dd>
-                                                <dd class="box-text">
-                                                    우리 브랜드의 팬을 모으고
-                                                    빠르게 새소식을 알릴 수
-                                                    있어요.
-                                                </dd>
-                                                <dd class="box-last"></dd>
-                                            </dl>
-                                        </div>
-                                        <div class="onelab-service-boxs-inner">
-                                            <button class="exit-onelab-btn">
-                                                탈퇴하기
-                                            </button>
-                                            <dl class="onelab-service-detail">
-                                                <dd class="box-icon">
-                                                    <i
-                                                        class="icon-maker-service"
-                                                    ></i>
-                                                </dd>
-                                                <dd class="box-title">
-                                                    <strong
-                                                        >강남 IT
-                                                        아카데미</strong
-                                                    >
-                                                </dd>
-                                                <dd class="box-text">
-                                                    우리 브랜드의 팬을 모으고
-                                                    빠르게 새소식을 알릴 수
-                                                    있어요.
-                                                </dd>
-                                                <dd class="box-last"></dd>
-                                            </dl>
-                                        </div>
+                                    <div class="onelab-service-boxs col-4 member-onelab-container">
                                     </div>
                                 </div>
                             </div>
+                        <div style="height: 50px"></div>
 
                        <!-- 자료 공유 클릭했을 때 나타나는 페이지 -->
                             <div id="share-list" class="main-container">
@@ -926,7 +675,7 @@
                                                         <div class="HomeVerticalCard_content">
                                                             <div class="HomeVerticalCard_thumbnailBox" style="padding-top: 56.25%;">
                                                                 <div class="HomeVerticalCard_thumbnailWrap">
-                                                                
+
                                                                     <div class="ThumbnailImage_container HomeVerticalCard_thumbnail">
                                                                     {% for placefile in place.placefile_set.all %}
                                                                             <img src="/upload/{{ placefile.path }}">
@@ -935,7 +684,7 @@
                                                                         </div>
                                                                 </div>
                                                             </div>
-                                                            
+
                                                             <div class="HomeVerticalCard_infoBox HomeVerticalCard_isStore">
                                                                 <div class="HomeVerticalCard_info">
                                                                     <strong class="Title_title">{{ place.place_title }}</strong>
@@ -971,120 +720,41 @@
                                 <!--이쪽 부분 지우고 school-place-share-list의 search-result-card-container 부분을 복붙하면 됨-->
                             </div>
                             <!-- 공모전/대회 클릭했을 때 나타나는 페이지 -->
-                            <div id="exhibit-list" class="main-container">
-                                <div
-                                    id="show-list"
-                                    class="SearchResult_cardContainer"
-                                >
-                                    <!-- 처음 목록 3개 -->
-                                    <div
-                                        id="swipe"
-                                        class="swiper-slide swiper-slide-active show"
-                                        style="
-                                            width: 236.8px;
-                                            margin-right: 24px;
-                                        "
-                                    >
-                                        <div class="css-1pulbqw">
-                                            <div class="css-3xk0il"></div>
-                                            <div
-                                                id="display-animation"
-                                                class="css-qn01ot"
-                                            >
-                                                <div class="css-18m1pdx">
-                                                    [2023 연말 결산] 와디즈가
-                                                    조명한 스무 갈래의 열린 길
+                             <div id="exhibit-list" class="main-container">
+                                <div id="show-list" class="SearchResult_cardContainer">
+                                    {% for exhibition in exhibitions %}
+                                    <div class="exhibition-item">
+                                        <a href="{{ exhibition.get_absolute_url }}">
+                                            <div class="css-1pulbqw">
+                                                <div class="css-3xk0il">
+                                                    {% for exhibitionfile in exhibition.exhibitionfile_set.all %}
+                                                    {% if exhibitionfile.preview %}
+                                                    <img src="/upload/{{ exhibitionfile.path }}" class="preview">
+                                                    {% endif %}
+                                                    {% endfor %}
                                                 </div>
-                                                <div
-                                                    class="css-ivvewn"
-                                                    style="display: none"
-                                                >
-                                                    성공 메이커 이야기 연말 결산
+                                                <div class="css-qn01ot">
+                                                    <div class="css-18m1pdx" style="color: #FFFFFF">{{ exhibition.exhibition_title }}</div>
+                                                    {# 다른 정보도 출력하고 싶다면 여기에 추가 #}
                                                 </div>
                                             </div>
-                                        </div>
+                                        </a>
                                     </div>
-                                    <div
-                                        id="swipe"
-                                        class="swiper-slide swiper-slide-active show"
-                                        style="
-                                            width: 236.8px;
-                                            margin-right: 24px;
-                                        "
-                                    >
-                                        <div class="css-1pulbqw">
-                                            <div class="css-3xk0il"></div>
-                                            <div
-                                                id="display-animation"
-                                                class="css-qn01ot"
-                                            >
-                                                <div class="css-18m1pdx">
-                                                    [2023 연말 결산] 와디즈가
-                                                    조명한 스무 갈래의 열린 길
-                                                </div>
-                                                <div
-                                                    class="css-ivvewn"
-                                                    style="display: none"
-                                                >
-                                                    성공 메이커 이야기 연말 결산
-                                                </div>
+                                    {% endfor %}
+                                  <div id="search-scroll-banner" class="search-result-scroll-banner-container">
+                                    <div class="search-result-scroll-banner">
+                                        <div class="search-result-banner-inner">
+                                             {% if exhibitions.has_next %}
+                                            <div id="more-view-btn" class="search-result-inner-inner" data-page="1">
+                                                <span>더보기</span>
                                             </div>
-                                        </div>
-                                    </div>
-                                    <div
-                                        id="swipe"
-                                        class="swiper-slide swiper-slide-active show"
-                                        style="
-                                            width: 236.8px;
-                                            margin-right: 24px;
-                                        "
-                                    >
-                                        <div class="css-1pulbqw">
-                                            <div class="css-3xk0il"></div>
-                                            <div
-                                                id="display-animation"
-                                                class="css-qn01ot"
-                                            >
-                                                <div class="css-18m1pdx">
-                                                    [2023 연말 결산] 와디즈가
-                                                    조명한 스무 갈래의 열린 길
-                                                </div>
-                                                <div
-                                                    class="css-ivvewn"
-                                                    style="display: none"
-                                                >
-                                                    성공 메이커 이야기 연말 결산
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- 더보기/목록이동 컨테이너 -->
-                                    <div
-                                        id="search-scroll-banner"
-                                        class="search-result-scroll-banner-container"
-                                    >
-                                        <div
-                                            class="search-result-scroll-banner"
-                                        >
-                                            <div
-                                                class="search-result-banner-inner"
-                                            >
-                                                <div
-                                                    id="more-view-btn"
-                                                    class="search-result-inner-inner"
-                                                >
-                                                    <span>더보기</span>
-                                                </div>
-                                                <div
-                                                    class="search-result-inner-inner"
-                                                >
-                                                    <span>공모전으로 가기</span>
-                                                </div>
-                                            </div>
+                                            {% endif %}
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                                </div>
+                            
                             <!-- 커뮤니티 클릭했을 때 나타나는 페이지 -->
                                     <div class="main-container">
                                 <div class="board-list-main">
@@ -1179,14 +849,14 @@
                                         </div>
                                     </div>
                                     <!-- </div> -->
-                                    <div class="button-wrapper">
-                                        <button class="auth3">
-                                            랩원 등록하기
-                                        </button>
-                                        <button class="auth2">
+                                    <div class="button-wrapper" style="right: 18px">
+{#                                        <button class="auth3">#}
+{#                                            랩원 등록하기#}
+{#                                        </button>#}
+                                        <button class="auth2" onclick="deleteSelectedMembers()">
                                             랩원 내보내기
                                         </button>
-                                        <button class="auth1">
+                                        <button class="auth1" onclick="deleteOneLab()">
                                             원랩 해체하기
                                         </button>
                                     </div>
@@ -1206,8 +876,8 @@
                                     <div class="min-2">이메일</div>
                                     <div class="grid-px">
                                         <div>이름</div>
-                                        <div>승인 여부</div>
                                         <div>회원 유형</div>
+{#                                        <div>회원 유형</div>#}
                                     </div>
                                 </div>
                                 <div class="col-center">
@@ -1222,59 +892,7 @@
                                         >
                                         <span class="name">홍길동</span>
                                         <span class="date"> 승인</span>
-                                        <span class="type">대학회원</span>
-                                    </li>
-                                    <li class="user-list">
-                                        <input
-                                            class="check2"
-                                            name="num2"
-                                            type="checkbox"
-                                        />
-                                        <span class="email"
-                                            >qwer123@gmail.com</span
-                                        >
-                                        <span class="name">조성현</span>
-                                        <span class="date">대기중</span>
-                                        <span class="type">일반회원</span>
-                                    </li>
-                                    <li class="user-list">
-                                        <input
-                                            class="check2"
-                                            name="num2"
-                                            type="checkbox"
-                                        />
-                                        <span class="email"
-                                            >qjsaadi123@gmail.com</span
-                                        >
-                                        <span class="name">홍길동</span>
-                                        <span class="date">대기중</span>
-                                        <span class="type">일반회원</span>
-                                    </li>
-                                    <li class="user-list">
-                                        <input
-                                            class="check2"
-                                            name="num2"
-                                            type="checkbox"
-                                        />
-                                        <span class="email"
-                                            >zio920@gmail.com</span
-                                        >
-                                        <span class="name">홍길동</span>
-                                        <span class="date"> 승인</span>
-                                        <span class="type">학교회원</span>
-                                    </li>
-                                    <li class="user-list">
-                                        <input
-                                            class="check2"
-                                            name="num2"
-                                            type="checkbox"
-                                        />
-                                        <span class="email"
-                                            >q0ds123@gmail.com</span
-                                        >
-                                        <span class="name">홍길동</span>
-                                        <span class="date"> 승인</span>
-                                        <span class="type">대학회원</span>
+{#                                        <span class="type">대학회원</span>#}
                                     </li>
                                 </div>
                             </div>
@@ -2115,88 +1733,88 @@
             </div>
         </div>
         <!-- 대학생 인증하는 모달페이지 -->
-        <div class="bottom-modal-certification-portal">
-            <div
-                class="bottom-modal-overlay banner-container-overlay bottom-modal-overlay-after-open"
-            >
-                <div
-                    class="bottom-modal-content bottom-modal-content-after-open"
-                    tabindex="-1"
-                    role="dialog"
-                    aria-modal="true"
-                >
-                    <div class="bottom-modal-container" style="top: 150px">
-                        <div class="banner-container-modal-container">
-                            <button
-                                type="button"
-                                aria-label="닫기"
-                                class="banner-container-close-button"
-                            >
-                                <svg
-                                    viewbox="0 0 40 40"
-                                    focusable="false"
-                                    role="presentation"
-                                    class="with-icon-icon"
-                                    aria-hiden="true"
-                                >
-                                    <path
-                                        d="M33.4 8L32 6.6l-12 12-12-12L6.6 8l12 12-12 12L8 33.4l12-12 12 12 1.4-1.4-12-12 12-12z"
-                                    ></path>
-                                </svg></button
-                            ><strong class="banner-container-modal-title"
-                                >대학생
-                                <span class="banner-container-brmo"
-                                    >인증하기</span
-                                ></strong
-                            >
-                            <p class="banner-container-modal-description">
-                                대학교 이메일을 입력해주세요.
-                            </p>
-                            <div class="news-letter-text-field-box">
-                                <form class="news-letter-text-field-form">
-                                    <div
-                                        class="text-field-text-field text-field-lg news-letter-text-field-text-field"
-                                    >
-                                        <label></label>
-                                        <div class="text-field-field">
-                                            <input
-                                                name="email"
-                                                placeholder="이메일 주소"
-                                                maxlength="64"
-                                                type="text"
-                                                class="input-input input-lg"
-                                                aria-invalid="false"
-                                                value=""
-                                            />
-                                            <!-- 인증하기 버튼 -->
-                                            <button
-                                                id="send-button"
-                                                class="button-button button-primary button-contained button-xl button-block news-letter-text-field-submit-button"
-                                                type="button"
-                                            >
-                                                <span
-                                                    ><span
-                                                        class="button-children"
-                                                        >인증하기</span
-                                                    ></span
-                                                >
-                                            </button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                            <p class="banner-container-modal-success">
-                                이메일이 성공적으로 발송되었습니다.
-                            </p>
-                            <p class="banner-container-modal-fail">
-                                이메일을 입력해주세요.
-                            </p>
-                        </div>
-                        <div class="bottom-modal-handle"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
+{#        <div class="bottom-modal-certification-portal">#}
+{#            <div#}
+{#                class="bottom-modal-overlay banner-container-overlay bottom-modal-overlay-after-open"#}
+{#            >#}
+{#                <div#}
+{#                    class="bottom-modal-content bottom-modal-content-after-open"#}
+{#                    tabindex="-1"#}
+{#                    role="dialog"#}
+{#                    aria-modal="true"#}
+{#                >#}
+{#                    <div class="bottom-modal-container" style="top: 150px">#}
+{#                        <div class="banner-container-modal-container">#}
+{#                            <button#}
+{#                                type="button"#}
+{#                                aria-label="닫기"#}
+{#                                class="banner-container-close-button"#}
+{#                            >#}
+{#                                <svg#}
+{#                                    viewbox="0 0 40 40"#}
+{#                                    focusable="false"#}
+{#                                    role="presentation"#}
+{#                                    class="with-icon-icon"#}
+{#                                    aria-hiden="true"#}
+{#                                >#}
+{#                                    <path#}
+{#                                        d="M33.4 8L32 6.6l-12 12-12-12L6.6 8l12 12-12 12L8 33.4l12-12 12 12 1.4-1.4-12-12 12-12z"#}
+{#                                    ></path>#}
+{#                                </svg></button#}
+{#                            ><strong class="banner-container-modal-title"#}
+{#                                >대학생#}
+{#                                <span class="banner-container-brmo"#}
+{#                                    >인증하기</span#}
+{#                                ></strong#}
+{#                            >#}
+{#                            <p class="banner-container-modal-description">#}
+{#                                대학교 이메일을 입력해주세요.#}
+{#                            </p>#}
+{#                            <div class="news-letter-text-field-box">#}
+{#                                <form class="news-letter-text-field-form">#}
+{#                                    <div#}
+{#                                        class="text-field-text-field text-field-lg news-letter-text-field-text-field"#}
+{#                                    >#}
+{#                                        <label></label>#}
+{#                                        <div class="text-field-field">#}
+{#                                            <input#}
+{#                                                name="email"#}
+{#                                                placeholder="이메일 주소"#}
+{#                                                maxlength="64"#}
+{#                                                type="text"#}
+{#                                                class="input-input input-lg"#}
+{#                                                aria-invalid="false"#}
+{#                                                value=""#}
+{#                                            />#}
+{#                                            <!-- 인증하기 버튼 -->#}
+{#                                            <button#}
+{#                                                id="send-button"#}
+{#                                                class="button-button button-primary button-contained button-xl button-block news-letter-text-field-submit-button"#}
+{#                                                type="button"#}
+{#                                            >#}
+{#                                                <span#}
+{#                                                    ><span#}
+{#                                                        class="button-children"#}
+{#                                                        >인증하기</span#}
+{#                                                    ></span#}
+{#                                                >#}
+{#                                            </button>#}
+{#                                        </div>#}
+{#                                    </div>#}
+{#                                </form>#}
+{#                            </div>#}
+{#                            <p class="banner-container-modal-success">#}
+{#                                이메일이 성공적으로 발송되었습니다.#}
+{#                            </p>#}
+{#                            <p class="banner-container-modal-fail">#}
+{#                                이메일을 입력해주세요.#}
+{#                            </p>#}
+{#                        </div>#}
+{#                        <div class="bottom-modal-handle"></div>#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
 
         <!-- 프로필 설정 모달페이지 -->
     <form action="{% url 'myPage:main' %}" method="POST" enctype="multipart/form-data" name="profile-form">
@@ -2276,7 +1894,7 @@
                                         disabled
                                     />
                                 </li>
-                                
+
                                 <li>
                                     <input
                                         type="text"
@@ -2289,7 +1907,7 @@
                                     />
                                 </li>
                             </ul>
-                           
+
                             <div class="btn-bottom">
                                 <ul class="btn-div2">
                                     <li>
@@ -2366,12 +1984,16 @@
                     </button>
                 </nav>
             </article>
+          
         </section>
     </div>
+    {% include 'header/main-page-footer.html' %}
     </form>
+    
 {%  endblock %}
 
 {% block js %}
+    <script src="{% static 'myPage/js/my-page-onelab-module.js' %}"></script>
     <script src="{% static 'myPage/js/my_page.js' %}"></script>
     <script src="{% static 'myPage/js/note_sending.js' %}"></script>
      <script>
@@ -2417,11 +2039,11 @@
 {#            document.getElementById('more-view-btn').style.display = 'none';#}
 {#        }#}
 {#    });#}
-{#});#}
+{# });#}
 {#    </script>#}
-    
+
     <script>
-     // 더보기 버튼 요소를 선택.
+    // 더보기 버튼 요소를 선택.
         const moreViewBtn = document.querySelector("#more-view-btn");
         
         // 더보기 버튼 클릭 이벤트에 대한 리스너를 추가.
@@ -2450,7 +2072,7 @@
                     let count = 0;
                     newExhibitionItems.forEach(item => {
                         // exhibitions의 개수만큼만 추가될 수 있도록 제한.
-                        if (count < 4) { 
+                        if (count < 3) { 
                             showList.appendChild(item);
                             count++;
                         }
@@ -2460,7 +2082,7 @@
                     moreViewBtn.dataset.page = page;
         
                     // 만약 더 이상 추가할 공모전이 없다면 더보기 버튼을 숨김.
-                    if (count === 3) {
+                    if (count <= 4) {
                         moreViewBtn.style.display = "none";
                     }
                 })
@@ -2470,7 +2092,7 @@
                 });
         });
     </script>
- 
+
     
 {% endblock %}
     

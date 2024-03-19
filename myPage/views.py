@@ -1,4 +1,5 @@
 from profile import Profile
+import json
 from oneLabProject.settings import MEDIA_URL
 from django.core.paginator import Paginator, EmptyPage
 from django.db.models import Sum, F
@@ -8,6 +9,9 @@ from django.views import View
 from django.utils import timezone
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+from onelab.models import OneLab, OneLabFile, OneLabBannerFile
+from onelabMember.models import OneLabMember
 from place.models import Place, PlaceLike, PlaceFile
 from community.models import Community, CommunityFile
 from exhibition.models import Exhibition, ExhibitionFile
@@ -45,13 +49,15 @@ class MyPageMainView(View):
 
 
         # 공모전 목록 가져오기
-        # exhibitions = None  # 공모전 목록 초기화
-        # if university:
-        #     exhibitions = Exhibition.objects.filter(exhibitionmember__university=university).order_by('-id')
-        #
-        #
-        # elif school:
-        #     exhibitions = Exhibition.objects.filter(school=school).order_by('-id')
+
+        if university:
+            exhibitions = Exhibition.objects.filter(exhibitionmember__university=university).order_by('-id')
+
+        elif school:
+            exhibitions = Exhibition.objects.filter(school=school).order_by('-id')
+
+        request.session['member'] = MemberSerializer(Member.objects.get(id=request.session['member']['id'])).data
+        check = request.GET.get('check')
 
         point = request.GET.get('point')
         # 커뮤니티 목록 가져오기
@@ -134,7 +140,7 @@ class MyPageMainView(View):
 
         # 커뮤니티 페이징 처리
         page = request.GET.get('page', 1)
-        community_row_count = 3
+        community_row_count = 5
         community_paginator = Paginator(community, community_row_count)
         try:
             communities = community_paginator.page(page)
@@ -143,6 +149,20 @@ class MyPageMainView(View):
         except EmptyPage:
             communities = community_paginator.page(community_paginator.num_pages)
 
+        # 공모전 페이징 처리
+        # exhibitions_row_count = 3
+        # exhibitions_paginator = Paginator(exhibitions, exhibitions_row_count)
+        #
+        # if exhibitions:
+        #     try:
+        #         exhibitions = exhibitions_paginator.page(page)
+        #     except PageNotAnInteger:
+        #         exhibitions = exhibitions_paginator.page(1)
+        #     except EmptyPage:
+        #         exhibitions = exhibitions_paginator.page(exhibitions_paginator.num_pages)
+        # else:
+        #     exhibitions = None
+        #
         default_profile_url = 'https://static.wadiz.kr/assets/icon/profile-icon-1.png'
 
         if profile is None:
@@ -169,6 +189,7 @@ class MyPageMainView(View):
             context['places'] = places
             context['place_file'] = PlaceFile.objects.filter(place_id=places.first()).first()
             context['shares'] = shares
+            context['exhibitions'] = exhibitions
             # context['share_file'] = list(shares.sharefile_set.all()),
 
 
@@ -179,12 +200,12 @@ class MyPageMainView(View):
             context['places'] = places
             context['school'] = school
             # context['places'] = places_page
-            # context['exhibitions'] = exhibitions
+            context['exhibitions'] = exhibitions
         # else :
         #     context['exhibitions'] = exhibitions
         else :
             context['community_file'] = CommunityFile.objects.filter(community_id=community.first()).first()
-
+            # context['exhibitions'] = exhibitions
         return render(request,
                       'mypage/main-high.html' if highschool else 'mypage/main-university.html' if university else 'mypage/main.html'
                       if school else 'mypage/main-nomal.html', context)
@@ -221,56 +242,105 @@ class MyPageMainView(View):
         #     request.session['member_files'] = member_files
         return redirect('myPage:main')
 
-class MyPagePlaceAPIView(APIView):
-    def get(self, request, page):
-        # 로그인 된 회원 정보 불러옴 -> id
-        member =request.session['member']['id']
-        # 학교회원의 정보를 불러옴 -> id
-        school = School.objects.filter(member=member).first()
 
-        # 한 페이지에 보여줄 장소의 개수와 페이지당 표시할 최대 페이지 수 설정
-        row_count = 4
+class MyPageOnelabAPI(APIView):
+    def get(self, request):
+        member_id = request.session['member']['id']
+        is_member = request.GET.get('is-member')
+        university = University.objects.filter(member_id=member_id).first()
+        if not university:
+            return Response("fail")
 
-        offset = (page - 1) * row_count
-        limit = page * row_count
+        onelabs = []
+        if is_member == 'false':
+            # 랩장
+            onelabs = OneLab.objects.filter(university=university)
+        else:
+            # 랩원
+            onelab_ids = OneLabMember.objects.filter(university=university, onelab_member_status__in=(0, 1)).values_list('onelab_id', flat=True)
+            onelabs = OneLab.objects.filter(id__in=onelab_ids)
 
-        datas = [
-                'id',
-                'place_title'
-        ]
+        # 데이터 준비
+        data = []
+        for onelab in onelabs:
+            onelab_data = {
+                'id': onelab.id,
+                'onelab_main_title': onelab.onelab_main_title,
+                'onelab_content': onelab.onelab_content,
+                'onelab_detail_content': onelab.onelab_detail_content,
+                'onelab_url': onelab.onelab_url,
+                'onelab_max_count': onelab.onelab_max_count,
+                'onelab_ask_email': onelab.onelab_ask_email,
+                'onelab_status': onelab.onelab_status,
+                'onelab_post_status': onelab.onelab_post_status,
+                'university_id': onelab.university_id,
+                'path': None  # 기본값 설정
+            }
 
-        # 필터링된 장소 목록 가져오기
-        places = Place.enabled_objects.filter(member=member).values(*datas).order_by('-id')
-        place_count = places.count()
-        places = places[offset:limit]
-        # 다음 페이지가 있는지 계산
-        has_next = place_count > offset + limit
+            # OneLabFile 확인
+            onelab_file = OneLabFile.objects.filter(onelab=onelab).first()
+            if onelab_file:
+                onelab_data['path'] = onelab_file.path.url
 
-        place_info = {
-            'places': [],
-            'member_like': {},
-        }
+            # OneLabBannerFile 확인 - 예시로 추가
+            onelab_banner_file = OneLabFile.objects.filter(onelab=onelab).first()
+            if onelab_banner_file:
+                onelab_data['banner_path'] = onelab_banner_file.path.url
 
-        for place in places:
-            place_one_id = place['id']
-            place_one = Place.objects.get(id=place_one_id)
-            place_files = place_one.placefile_set.all()
+            data.append(onelab_data)
 
-            # 장소공유 파일 데이터를 리스트에 추가
-            place_file_info = []
-            for file in place_files:
-                file_info = {
-                    'id': file.pk,
-                    'path': file.path.url,  # 파일의 경로를 나타내는 속성
-                }
-                place_file_info.append(file_info)
+        return Response(data)
 
-            # 장소 정보에 파일 정보를 추가
-            place['place_files'] = place_file_info
-
-            place_info['places'].append(place)
-
-        return Response(place_info)
+# class MyPagePlaceAPIView(APIView):
+#     def get(self, request, page):
+#         # 로그인 된 회원 정보 불러옴 -> id
+#         member =request.session['member']['id']
+#         # 학교회원의 정보를 불러옴 -> id
+#         school = School.objects.filter(member=member).first()
+#
+#         # 한 페이지에 보여줄 장소의 개수와 페이지당 표시할 최대 페이지 수 설정
+#         row_count = 4
+#
+#         offset = (page - 1) * row_count
+#         limit = page * row_count
+#
+#         datas = [
+#                 'id',
+#                 'place_title'
+#         ]
+#
+#         # 필터링된 장소 목록 가져오기
+#         places = Place.enabled_objects.filter(member=member).values(*datas).order_by('-id')
+#         place_count = places.count()
+#         places = places[offset:limit]
+#         # 다음 페이지가 있는지 계산
+#         has_next = place_count > offset + limit
+#
+#         place_info = {
+#             'places': [],
+#             'member_like': {},
+#         }
+#
+#         for place in places:
+#             place_one_id = place['id']
+#             place_one = Place.objects.get(id=place_one_id)
+#             place_files = place_one.placefile_set.all()
+#
+#             # 장소공유 파일 데이터를 리스트에 추가
+#             place_file_info = []
+#             for file in place_files:
+#                 file_info = {
+#                     'id': file.pk,
+#                     'path': file.path.url,  # 파일의 경로를 나타내는 속성
+#                 }
+#                 place_file_info.append(file_info)
+#
+#             # 장소 정보에 파일 정보를 추가
+#             place['place_files'] = place_file_info
+#
+#             place_info['places'].append(place)
+#
+#         return Response(place_info)
 
 class MyPageCommunityView(View):
     def get(self, request):
@@ -409,3 +479,93 @@ class MemberLogoutView(View):
     def get(self, request):
         request.session.clear()
         return redirect('/')
+
+
+class OneLabMembersAPI(View):
+    def get(self, request):
+        # 해당 University와 OneLab 정보 가져오기
+        university = University.objects.get(member_id=request.session['member']['id'])
+        onelabs = OneLab.objects.filter(university=university)
+
+        onelab_info = []
+        for onelab in onelabs:
+            members_info = []
+            members = OneLabMember.objects.filter(onelab=onelab, onelab_member_status=1).select_related(
+                'university__member')
+            for member in members:
+                member_info = {
+                    'member_id': member.university.member.id,
+                    'member_email': member.university.member.member_email,
+                    'member_name': member.university.member.member_name,
+                    'member_major': member.university.university_member_major,
+                    'member_points': member.university.university_member_points,
+                    'onelab_member_status': member.onelab_member_status
+                }
+                members_info.append(member_info)
+
+            onelab_info.append({
+                'onelab_id': onelab.id,
+                'members': members_info
+            })
+
+        return JsonResponse(onelab_info, safe=False)
+
+
+def delete_members(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        selected_items = data.get("selected_items")
+        print(selected_items)
+        print(selected_items)
+        # 선택된 항목들의 상태를 3으로 변경하는 코드를 작성
+        for item_id in selected_items:
+            try :
+                OneLabMember.objects.filter(university__member__member_email=item_id).update(onelab_member_status=3)
+                print('성공!')
+            except :
+                pass # 항목이 존재하지 않는 경우 무시
+
+        return JsonResponse({'message': '선택된 회원이 성공적으로 탈퇴 되었습니다.'})
+    return JsonResponse({'message': 'POST 요청이 필요합니다.'}, status=400)
+
+def delete_onelab(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body.decode('utf-8'))
+            selected_item = data.get('selectedName')
+            onelab = OneLab.objects.get(onelab_main_title=selected_item)
+            member_id = request.session['member']['id']
+
+            # 해당 사용자가 해당 OneLab에 속한 멤버인지 확인
+            onelab_member = OneLabMember.objects.get(university_id=member_id, onelab_id=onelab.id)
+
+            # 멤버 상태를 탈퇴(3)로 변경
+            onelab_member.onelab_member_status = 3
+            onelab_member.save()
+
+            return JsonResponse({'message': '선택된 항목이 성공적으로 탈퇴되었습니다.'})
+        except ObjectDoesNotExist:
+            return JsonResponse({'error': '해당 항목이 존재하지 않거나 권한이 없습니다.'}, status=404)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    return JsonResponse({'error': 'POST 요청이 필요합니다'}, status=400)
+
+def delete_all(request):
+    if request.method == 'POST':
+        # OneLab 모델에서 해당하는 객체 가져오기
+        try:
+            data = json.loads(request.body.decode('utf-8'))
+            onelabId = data.get('id')
+            print(onelabId)
+            print('아이디를 못받아옴 ',onelabId)
+            onelab = OneLab.objects.filter(id=onelabId).first()  # 해당하는 원랩 객체 가져오기
+            if onelab:
+                # onelab_post_status 값을 False로 변경
+                onelab.onelab_post_status = False
+                onelab.save()
+                return JsonResponse({'message': '원랩이 성공적으로 종료되었습니다.'})
+            else:
+                return JsonResponse({'message': '원랩을 찾을 수 없습니다.'}, status=404)
+
+        except:
+            return JsonResponse({'message': 'POST 요청이 필요합니다.'}, status=400)

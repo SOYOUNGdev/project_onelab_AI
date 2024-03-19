@@ -4,11 +4,13 @@
 
 {% block static %}
     <link rel="stylesheet" href="{% static 'exhibition/css/exhibition_detail.css' %}">
+    <link rel="stylesheet" href="{% static 'public/css/main-page-footer.css' %}">
 {% endblock %}
 
 {% block title %}공모전 상세페이지{% endblock %}
 
 {% block content %}
+    {% include  "header/main-page-header-login.html"%}
     <div id="page-container">
             <main id="main" style="visibility: visible">
                 <!-- 헤더 -->
@@ -20,9 +22,10 @@
                                     <div class="community-detail-container">
                                     {% if request.session.member.member_status == False %}
                                         <a href="{% url 'member:admin_main_exhibition' %}">
-                                    {% else %}
+                                    {% elif request.session.member.member_status == True %}
                                         <a href="{% url 'exhibition:list' %}">
                                     {% endif %}
+                                        
                                             <button type="button" class="go-to-list-btn">
                                                 <span>
                                                     <svg viewBox="0 0 24 24" fill="none" focusable="false" role="presentation" class="go-to-list-svg" aria-hidden="true">
@@ -39,7 +42,7 @@
                                                 <span class="community-detail-state">오픈예정</span>
                                             </p>
                                             <div class="community-title-wrapper">
-                                                <p class="community-title">{{ exhibition.exhibition_title }}</p>
+                                                <p class="community-title">공모전 상세페이지</p>
                                                 <!-- 공유하기 버튼 -> 추천 버튼? -->
                                                 <div class="community-like-icon">
                                                     <button type="button" style="position: relative">
@@ -55,7 +58,6 @@
                                                 </div>
                                             </div>
                                             <p class="community-write-date">{{ exhibition.created_date }}</p>
-                                            
                                         </div>
                                         <div class="community-detail-contents-container">
                                             <div class="community-detail-contents-wrapper">
@@ -72,16 +74,16 @@
                                                                                 <!-- class="DeliveryInfoField_deliveryDesc" -->
                                                                                 <ul class="">
                                                                                     <li>{{ member_name }}</li>
-                                                                                    
+                                                                                    <!-- <li>
+                                                                                <div class="DetailInfoHeader_shippingChargeContainer">
+                                                                                    <span class="DetailInfoHeader_shippingChargeText">배송비</span>
+                                                                                    <span>3,500원</span>
+                                                                                </div>
+                                                                            </li> -->
                                                                                 </ul>
                                                                             </div>
                                                                         </div>
                                                                     </dd>
-                                                                    {% if request.session.member.member_status == False %}
-                                                                        <a href="{% url 'exhibition:update' id=exhibition.id %}" class="update-btn">수정하기</a>
-                                                                    {% elif request.session.member.id == exhibition.school.member.id  %}
-                                                                        <a href="{% url 'exhibition:update' id=exhibition.id %}" class="update-btn">수정하기</a>
-                                                                    {% endif %}
                                                                 </div>
     {#                                                            <div class="DetailInfoHeader_termsBox">#}
     {#                                                                <dt class="DetailInfoHeader_terms">신청인원</dt>#}
@@ -102,16 +104,16 @@
                                                             <div class="detail-info-header-app-coupon-banner">
                                                                 {% for file in exhibition.exhibitionfile_set.all %}
                                                                     {% if file.download_path %}
-                                                                        <a href="{% url 'exhibition-down' file_path=file.download_path %}" class="available-coupon-button-button">
+                                                                        <a href="{% url 'download' file_path=file.download_path %}" class="available-coupon-button-button">
                                                                         <input type="file" style="display: none" />양식 다운로드
                                                                         <svg viewBox="0 0 48 48" focusable="false" role="presentation" class="with-icon-icon available-coupon-button-icon">
                                                                             <path d="M40.8 43.2H7.2v-2.4h33.6v2.4zm-5.28-22.08L25.2 31.44V4.8h-2.4v26.64L12.48 21.12 10.8 22.8 24 36l13.2-13.2-1.68-1.68z"></path>
                                                                         </svg>
                                                                     </a>
                                                                     {% endif %}
-
+                                                                    
                                                                 {% endfor %}
-
+                                                                    
                                                             </div>
                                                             <div></div>
                                                             <div></div>
@@ -185,7 +187,23 @@
                                                                 </span>
                                                             </button>
                                                         </a>
-                                                            
+                                                <!--------공모전 참여 버튼 -----------!-->
+                                                   <!--------공모전 참여 버튼 -----------!-->
+                                                <div style="height: 15px"></div>
+                                                <a href="{% url 'exhibition:list' %}" target="_blank">
+                                                    <form action="{% url 'exhibition:detail' %}" method="POST" enctype="multipart/form-data">
+                                                        {% csrf_token %}
+                                                        <input type="hidden" name="id" value="{{ exhibition.id }}">
+                                                        <button type="submit" class="button-button button-primary" style="margin-left: 116px;">
+                                                            <span>
+                                                                <input type="hidden" name="join-btn">
+                                                                <span class="Button_children">
+                                                                    <span>공모전 참여하기</span>
+                                                                </span>
+                                                            </span>
+                                                        </button>
+                                                    </form>     
+                                                </a>
                                                 </div>
                                             </div>
                                         </div>
@@ -194,6 +212,7 @@
                             </div>
                         </div>
                     </div>
+                
                     <!-- 푸터 -->
                 </div>
                 <div class="floating-buttons-container">
@@ -239,6 +258,7 @@
                 </div>
             </div>
         </div>
+    {% include  "header/main-page-footer.html"%}
 {% endblock %}
 
 {% block js %}

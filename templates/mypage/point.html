@@ -3,9 +3,11 @@
 {% block static %}
 <link rel="icon" type="image/png" sizes="16x16" href="{% static 'myPage/images/favicon-16x16.png' %}">    
 <link rel="stylesheet" href="{% static 'myPage/css/my_page_point.css' %}">
+ <link rel="stylesheet" href="{% static 'myPage/css/myPage-footer.css' %}" />
 {% endblock %}
 {% block title %}마이페이지 포인트화면{% endblock %}
 {%  block content %}
+    {% include 'mypage/header.html' %}
     {%  csrf_token %}
     <div id="page-container">
             <div class="black-bg-wrap" style="display:none;"></div>
@@ -172,6 +174,7 @@
                 </div>
             </div>
         </div>
+    {% include 'header/main-page-footer.html' %}
 {% endblock %}
 {%  block js %}
     <script src="{% static 'myPage/js/my_page_point.js' %}"></script>

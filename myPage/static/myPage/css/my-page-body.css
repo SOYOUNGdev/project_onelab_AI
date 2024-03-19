@@ -249,8 +249,10 @@ h4{
     background-color: #212529;
     color: #fff;
 }
-.user-container-button{
-    position: relative;
+
+.user-container-button {
+    margin-left: 110px;
+    position: absolute;
     z-index: 0;
     border-radius: 8px;
     width: 61px;
@@ -259,6 +261,7 @@ h4{
     line-height: 28px;
     color: #868e96;
 }
+
 .user-profile{
     background-color: #fff;
     position: relative;
@@ -1073,7 +1076,7 @@ button.major-btn span {
 
 .onelab-service-boxs.col-4>div {
     width: 22.6%;
-    height: 310px;
+    height: 370px;
     margin: 1.2%;
 }
 
@@ -1412,9 +1415,6 @@ svg.wish-icon>path {
 #search-scroll-banner {
     width: 192px;
 }
-.search-result-scroll-banner-container {
-    width: 198px;
-}
 
 .search-result-scroll-banner {
     position: relative;
@@ -1428,10 +1428,9 @@ svg.wish-icon>path {
 }
 
 .search-result-banner-inner {
-    width: 100%;
+    width: 110%;
     height: 100%;
     margin-bottom: 16px;
-    
     border-radius: 10px;
     cursor: pointer;
     background-color: #fff;
@@ -1440,13 +1439,12 @@ svg.wish-icon>path {
     align-items: center;
     flex-direction: column;
     justify-content: center;
-    
     border: 1px solid #eaeaea;
 }
 
 .search-result-inner-inner {
     width: 70%;
-    height: 18%;
+    height: 35%;
     background-color: #ffffffea;
     border-radius: 10px;
     margin: 15px auto 10px;
@@ -1456,7 +1454,7 @@ svg.wish-icon>path {
 }
 
 .search-result-inner-inner span {
-    height: 100%;
+    height: 70%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -1465,7 +1463,6 @@ svg.wish-icon>path {
     border-radius: 10px;
     color: #fff;
 }
-
 .search-result-inner-inner span:hover {
     background-color: #00592e
 }
@@ -1756,10 +1753,10 @@ h3.title:hover {
 .grid-px {
     padding-left: 12px;
     padding-right: 45px;
-    column-gap: 132px;
+    column-gap: 190px;
     grid-auto-flow: column;
     display: grid;
-    margin-right: 42px ;
+    margin-right: -32px;
 }
 .col-center {
     justify-content: center;
@@ -1770,13 +1767,16 @@ h3.title:hover {
     /* margin-top: 88px; */
 }
 .user-list{
-    width: 944px; 
-    height: 23px; 
-    border-style: solid; 
-    border-bottom-width: 1px; 
-    justify-content: space-between; 
-    align-items: center; min-height: 60px; 
-    display: flex; 
+    width: 979px;
+    height: 23px;
+    border-style: solid;
+    border-bottom-width: 1px;
+    justify-content: space-between;
+    align-items: center;
+    /* min-width: 97px; */
+    column-gap: 106px;
+    min-height: 60px;
+    display: flex;
     border-color: #e6e6e7;
 }
 .check2{

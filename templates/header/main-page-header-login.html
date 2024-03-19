@@ -11,18 +11,18 @@
                         <h1 class="wadiz-logo">
                             <a href="">
                                 <span class="label">원랩</span>
-                                <img id="one-lab" src="/staticfiles/images/header-logo_RE.png" alt="" />
+                                <img id="one-lab" src="{% static 'myPage/images/img.png' %}" alt="" />
                             </a>
                         </h1>
                         <!--메뉴 탭-->
                         <ul class="desktop-container">
                             <!--원랩-->
                             <li class="desktop-item">
-                                <a class="desktop-link" href=""><span>원랩</span></a>
+                                <a class="desktop-link" href="{% url 'onelab:list' %}"><span>원랩</span></a>
                             </li>
                             <!--공지-->
                             <li class="desktop-item">
-                                <a class="desktop-link" href=""><span>공지</span></a>
+                                <a class="desktop-link" href="{% url 'notification:list' %}"><span>공지</span></a>
                             </li>
                             <!--장소공유-->
                             <li class="desktop-item">
@@ -30,7 +30,7 @@
                             </li>
                             <!--커뮤니티-->
                             <li class="desktop-item">
-                                <a class="desktop-link" href=""><span>커뮤니티</span></a>
+                                <a class="desktop-link" href="{% url 'community:list' %}"><span>커뮤니티</span></a>
                             </li>
                             <!--학교-->
                             <li class="desktop-item">
@@ -128,17 +128,17 @@
             <div class="categorybar-container">
                 <div class="categorybar-main-categories-wrapper">
                     <ul class="categorybar-main-categories">
-                        <li class="categorybar-main-category">장소공유목록</li>
-                        <li class="categorybar-main-category">원랩목록</li>
-                        <li class="categorybar-main-category">질의응답</li>
-                        <li class="categorybar-main-category">자료공유</li>
-                        <li class="categorybar-main-category">공모전·대회</li>
-                        <li class="categorybar-main-category">회사소개</li>
+                        <li class="categorybar-main-category" onclick="location.href='/place/list/'">장소공유목록</li>
+                        <li class="categorybar-main-category" onclick="location.href='/onelab/list/'">원랩목록</li>
+                        <li class="categorybar-main-category" onclick="location.href='/notification/list/'">공지사항</li>
+                        <li class="categorybar-main-category" onclick="location.href='/share/list/'">자료공유</li>
+                        <li class="categorybar-main-category" onclick="location.href='/exhibition/list/'">공모전·대회</li>
+                        <li class="categorybar-main-category" onclick="location.href='/school/main/'">회사소개</li>
                     </ul>
                 </div>
             </div>
         </div>
 {% endblock %}
 {% block js %}
-    <script src="{% static 'js/header/main-page-header-list.js' %}"></script>
+    <script src="{% static 'member/js/header/main-page-header-list.js' %}"></script>
 {% endblock %}

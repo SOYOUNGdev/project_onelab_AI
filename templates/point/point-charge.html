@@ -5,10 +5,11 @@
         <link rel="stylesheet" href="{% static 'payment/css/payment.css' %}" />
 {#        <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />#}
         <link rel="icon" type="image/png" sizes="16x16" href="{% static 'payment/images/favicon-32x32.png' %}" />
+        <link rel="stylesheet" href="{% static 'myPage/css/myPage-footer.css' %}">
 {% endblock %}
 {% block title %}결제하기{% endblock %}
 {% block content %}
-  
+  {% include 'mypage/header.html' %}
 {#    <body style="overflow: auto">#}
     <form action="{% url 'point:new' %}" method="POST" name="point-new" enctype="multipart/form-data">
         {% csrf_token %}
@@ -317,7 +318,9 @@
                         </div>
                     </div>
                     <!-- 푸터 부분 -->
-                    <footer></footer>
+                    <footer>
+                        {% include 'header/main-page-footer.html' %}
+                    </footer>
                 </div>
             </main>
         </div>

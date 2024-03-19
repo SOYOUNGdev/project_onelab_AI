@@ -9,9 +9,11 @@ from django.shortcuts import render, redirect
 from django.views import View
 
 from exhibition.models import Exhibition, ExhibitionFile
+from exhibitionMember.models import ExhibitionMember
 from file.models import File
 from member.models import Member
 from school.models import School
+from university.models import University
 
 
 class ExhibitionWriteView(View):
@@ -68,6 +70,35 @@ class ExhibitionDetailView(View):
         }
 
         return render(request, 'exhibition/detail.html', context)
+    def post(self, request):
+        data = request.POST
+        member_id = request.session['member']['id']
+        university = University.objects.get(member_id=member_id)
+
+        if university is None:
+            return render(request, 'exhibition/detail.html', {'error': '대학생만 참여 가능합니다.'})
+
+        exhibition_id = data.get('id')
+
+        # 이미 참여한 공모전인지 확인
+        existing_member = ExhibitionMember.objects.filter(university_id=university.member_id,
+                                                          exhibition_id=exhibition_id).first()
+        if existing_member:
+            # 이미 참여한 경우에는 업데이트 시간만 변경
+
+            from django.utils import timezone
+            existing_member.updated_at = timezone.now()
+            existing_member.save()
+        else:
+            # 참여한 공모전이 없는 경우에만 새로운 데이터 생성
+            datas = {
+                'university_id': university.member_id,
+                'exhibition_id': exhibition_id,
+                'exhibition_member_status': 0
+            }
+            ExhibitionMember.objects.create(**datas)
+
+        return redirect('myPage:main')
 
 class ExhibitionFileDownloadView(View):
     def get(self, request, file_path, *args, **kwargs):

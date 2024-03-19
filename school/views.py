@@ -20,7 +20,7 @@ class SchoolMainView(View):
 
         # 메인페이지 이동
         return render(request, 'school/main.html')
-    
+
 # 학교 회원 신청 view
 class SchoolMemberView(View):
     def post(self, request):
@@ -28,7 +28,7 @@ class SchoolMemberView(View):
         member = Member.objects.get(id=request.session['member']['id'])
         # post로 전달된 data
         data = request.POST
-        
+
         # 받아온 data -> name값 이용하여 context에 dict 타입으로 저장
         context = {
             'school_name': data['school-name'],
@@ -40,3 +40,5 @@ class SchoolMemberView(View):
         
         # 메인페이지 이동
         return render(request,'school/main.html')
+
+

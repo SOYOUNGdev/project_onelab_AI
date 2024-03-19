@@ -47,7 +47,10 @@
 
 
 // 카테고리 선택 기능
+
 // 랩장 랩원 눌렀을 때 구별되는 페이지 나타내는 기능
+// 양현 작업
+// 내가 랩장인 원랩 목록을 넣을 컨테이너
 const manageOnelabContainer = document.querySelector(".manage-onelab-container")
 
 // 내가 랩장인 원랩 목록을 화면에 표시하는 함수
@@ -80,7 +83,7 @@ const showManageOnelabList = (onelabList) => {
             `;
         } else {
             text += `
-                <img src="/upload/${onelab.path}">
+                <img src="${onelab.path}">
             `
         }
         text += `
@@ -100,10 +103,9 @@ const showManageOnelabList = (onelabList) => {
     addClickEventToManageOnelabButtons();
 }
 
-
-
 // 내가 랩원인 원랩 목록을 넣을 컨테이너
 const memberOnelabContainer = document.querySelector(".member-onelab-container");
+
 
 // 내가 랩원인 원랩 목록을 화면에 표시하는 함수
 const showMemberOnelabList = (onelabList) => {
@@ -123,7 +125,7 @@ const showMemberOnelabList = (onelabList) => {
             `;
         } else {
             text += `
-                <img src="/upload/${onelab.path}">
+                <img src="${onelab.path}">
             `
         }
         text += `
@@ -142,9 +144,6 @@ const showMemberOnelabList = (onelabList) => {
     memberOnelabContainer.innerHTML = text;
     addClickEventToQuitOnelabButtons();
 }
-
-
-
 
 
 // 랩장 랩원 눌렀을 때 구별되는 페이지 나타내는 기능
@@ -169,6 +168,7 @@ for (let i = 0;i < buttons.length; i++) {
         }
     })
 }
+
 
 // 카테고리 목록 내, 좋아요 기능
 // 좋아요 눌렀을 때 좋아요 되었다는 알림글 나타내기
@@ -240,14 +240,15 @@ const tabpages = document.querySelectorAll(".my-page-project-content");
 //         // 선택한 해당탭의 색상을 넣어주는 기능
 //         tabpages[i].classList.toggle("onclick");
 //     })
-    
+
 // }
 
 // 탭 눌렀을 때 화면나타나는 기능과 함께 추가작업 필요
 
 // 원랩 눌렸을 때 열리는 기능
-tabpages[0].addEventListener("click", (e)=> {
+tabpages[0].addEventListener("click", async (e)=> {
     if (onelab_page[0].style.display === "none") {
+        await myPageOnelabService.getList(false, showManageOnelabList);
         onelab_page.forEach((page)=>{
             page.style.display = "none";
         })
@@ -328,15 +329,162 @@ if (currentPage && currentPage !== 1) {
 
 // 관리하기 눌렀을 때 열리는 기능 -> 함수화하여 fetch 이후에 뿌려진 원랩목록들에 각각 적용합니다.
 // 관리하기 부분은 성현씨께서 fetch 관련 만들어서 구성원 정보 뿌리는 로직 추가하시면 됩니다.
+// const addClickEventToManageOnelabButtons = () => {
+//     const manage_onelab_btn = document.querySelectorAll(".manage-onelab-btn");
+//     manage_onelab_btn.forEach((btn)=>{
+//         btn.addEventListener("click", ()=>{
+//             if (onelab_page[5].style.display === "none") {
+//                 onelab_page.forEach((page)=>{
+//                     page.style.display = "none";
+//                 })
+//                 onelab_page[5].style.display = "block";
+//
+//                 // OneLab 멤버 정보를 불러와서 뿌리는 로직 추가
+//                 fetch('/myPage/onelab_list/')
+//                     .then(response => response.json())
+//                     .then(data => {
+//                         // OneLab 멤버 정보를 받아서 처리하는 함수 호출
+//                         showOnelabMembers(data);
+//                     })
+//                     .catch(error => {
+//                         console.error('Error:', error);
+//                     });
+//             } else {
+//                 onelab_page[5].style.display = "none";
+//             }
+//         })
+//     })
+// }
+
+function selectAll(selectAll) {
+    const checkboxes = document.querySelectorAll(
+        'input[type="checkbox"]'
+    ); /* type = checkbox 인 요소들을 불러온다. */
+
+    checkboxes.forEach((checkbox) => {
+        /* 모든 체크 박스들을 순회하여 */
+        checkbox.checked =
+            selectAll.checked; /* 모든 체크박스들을 체크시킨다. */
+    });
+}
+
+
+
+// OneLab 멤버 정보를 받아서 처리하는 함수
+// AJAX를 사용하여 멤버 정보를 가져오고 화면에 표시하는 함수
+const fetchAndDisplayMembers = () => {
+    fetch('/myPage/onelab_list/')
+        .then(response => response.json())
+        .then(data => {
+            // OneLab 멤버 정보를 받아서 화면에 표시
+            const onelabList = document.querySelectorAll('.col-center');
+            onelabList.forEach((listItem, index) => {
+                const members = data[index].members; // 각 원랩에 속한 멤버 정보
+                listItem.innerHTML = ''; // 기존 내용 비우기
+
+                members.forEach(member => {
+                    const memberItem = document.createElement('li');
+                    memberItem.classList.add('user-list');
+
+                    const checkbox = document.createElement('input');
+                    checkbox.classList.add('check2');
+                    checkbox.setAttribute('type', 'checkbox');
+                    checkbox.setAttribute('name', 'num2');
+
+                    const email = document.createElement('span');
+                    email.classList.add('email');
+                    email.textContent = member.member_email;
+
+                    const name = document.createElement('span');
+                    name.classList.add('name');
+                    name.textContent = member.member_name;
+
+                    const status = document.createElement('span');
+                    status.classList.add('date');
+                    status.textContent = member.onelab_member_status;
+
+                    memberItem.appendChild(checkbox);
+                    memberItem.appendChild(email);
+                    memberItem.appendChild(name);
+                    memberItem.appendChild(status);
+
+                    listItem.appendChild(memberItem);
+                });
+            });
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+};
+function getCSRFToken() {
+    const csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');
+    return csrfTokenMeta.getAttribute('content');
+}
+
+
+
+// 원랩 해체 기능
+
+
+
+
+// 회원 탈퇴 기능
+function deleteSelectedMembers() {
+    const csrfToken = getCSRFToken();
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+    const selectedItems = Array.from(checkboxes)
+        .filter(checkbox => checkbox.closest(".user-list"))
+        .map(checkbox => checkbox.parentElement.querySelector(".email").textContent);
+
+    if (selectedItems.length === 0) {
+        alert("삭제할 항목을 선택하세요");
+        return;
+    }
+
+    const data = { selected_items: selectedItems }; // 데이터를 객체 형태로 JSON으로 전달
+    fetch('/myPage/delete_members/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify(data) // 객체를 JSON 문자열로 변환하여 전송
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('서버 응답에 문제가 있습니다.');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log(data.message);
+            // 성공적으로 처리된 경우에 대한 작업 수행
+            window.location.reload();
+        })
+        .catch(error => {
+            console.error('오류 발생:', error);
+            alert('삭제 중 오류가 발생했습니다.');
+        });
+}
+
+// 관리하기 버튼 클릭 시
 const addClickEventToManageOnelabButtons = () => {
     const manage_onelab_btn = document.querySelectorAll(".manage-onelab-btn");
     manage_onelab_btn.forEach((btn)=>{
         btn.addEventListener("click", ()=>{
+
+
             if (onelab_page[5].style.display === "none") {
                 onelab_page.forEach((page)=>{
                     page.style.display = "none";
                 })
                 onelab_page[5].style.display = "block";
+
+                // OneLab 멤버 정보를 불러와서 화면에 표시
+                fetchAndDisplayMembers();
+                const title = document.querySelector('box-title')
+                deleteOneLab(title)
+
             } else {
                 onelab_page[5].style.display = "none";
             }
@@ -344,6 +492,44 @@ const addClickEventToManageOnelabButtons = () => {
     })
 }
 
+
+function deleteOneLab(title) {
+    const csrfToken = getCSRFToken(); // CSRF 토큰 가져오기
+
+    const data = { title: title };
+
+    fetch('/myPage/delete_all/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify({id : `${onelab.id}`}) // 데이터 없음
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('서버 응답에 문제가 있습니다.');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log(data.message); // 성공적인 응답
+        // 성공적으로 처리된 경우에 대한 작업 수행
+        // 예: 페이지 새로고침 또는 다른 작업 수행
+        window.location.reload(); // 페이지 새로고침
+    })
+    .catch(error => {
+        console.error('오류 발생:', error);
+        alert('처리 중 오류가 발생했습니다.');
+    });
+}
+
+
+
+function getCSRFToken() {
+    const csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');
+    return csrfTokenMeta.getAttribute('content');
+}
 // 탈퇴하기 눌렀을 때 열리는 기능은 구현 안 돼있길래 아래에 함수를 만들어만 놓고,
 // fetch로 "내가 랩원인 원랩" 목록을 뿌리고 나서 각 버튼에도 적용되도록
 // 화면에 뿌리는 부분(위에 있습니다, showMemberOnelabList()) 에 써놓도록 하겠습니다.
@@ -351,15 +537,47 @@ const addClickEventToQuitOnelabButtons = () => {
     const exitOnelabButtons = document.querySelectorAll(".exit-onelab-btn");
     exitOnelabButtons.forEach((btn) => {
         btn.addEventListener("click", () => {
-            // 탈퇴 관련 로직 구현
+
+            const parent = btn.parentElement;
+            const onelabname = parent.querySelector(".box-title strong").textContent;
+            console.log(onelabname);
+            // const data = {selectedName: onelabname};
+            soft_delete_onelab(onelabname);
         })
     })
+} // <<< 이쪽 탈퇴하기 부분을  OneLabMember의 onelab_member_status가 3으로 바뀌어야함
+
+function soft_delete_onelab(onelabname)  {
+    const csrfToken = getCSRFToken();
+
+    const data = { selectedName: onelabname };
+
+   fetch('http://127.0.0.1:10000/myPage/deleteonelab/', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrfToken
+    },
+    body: JSON.stringify(data)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('서버 응답에 문제가 있습니다');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log(data.message);
+        window.location.reload();
+    })
+    .catch(error => {
+        console.error('오류발생:', error);
+        alert('삭제 중 오류가 발생했습니다.')
+    });
 }
-
-
 // 프로필 설정 창 모달 기능 구현
 const profile_modal = document.querySelector(".bottom-modal-profile-portal");
-console.log(profile_modal);
+// console.log(profile_modal);
 // 프로필 설정창 열기
 const open_profile = document.querySelector("button.user-profile-edit-profile");
 open_profile.addEventListener("click", ()=>{
@@ -454,23 +672,23 @@ confirmed_btn_modal.addEventListener("click", (e)=> {
 
 
 // 더보기 했을 때 애니메이션 살리는 기능
-const show_page = document.querySelector("#show-list");
+// const show_page = document.querySelector("#show-list");
+//
+// const main_view = document.querySelector("#exhibit-list");
 
-const main_view = document.querySelector("#exhibit-list");
-
-main_view.addEventListener("mouseover",()=>{
-    
-    const lists = document.querySelectorAll(".swiper-slide");
-    const display_animation = document.querySelectorAll(".css-qn01ot");
-    for(let i=0;i<lists.length;i++) {
-        lists[i].addEventListener("mouseover", ()=>{
-            display_animation[i].classList.add("list-active");
-        })
-        lists[i].addEventListener("mouseout", ()=>{
-            display_animation[i].classList.remove("list-active");
-        })
-    }
-})
+// main_view.addEventListener("mouseover",()=>{
+//
+//     const lists = document.querySelectorAll(".swiper-slide");
+//     const display_animation = document.querySelectorAll(".css-qn01ot");
+//     for(let i=0;i<lists.length;i++) {
+//         lists[i].addEventListener("mouseover", ()=>{
+//             display_animation[i].classList.add("list-active");
+//         })
+//         lists[i].addEventListener("mouseout", ()=>{
+//             display_animation[i].classList.remove("list-active");
+//         })
+//     }
+// })
 // 공모전 더보기 눌렀을 때 기능
 // main_view.addEventListener("mouseover",()=>{
 //     const more_view_containers = document.querySelectorAll(".search-result-scroll-banner-container");
@@ -479,54 +697,54 @@ main_view.addEventListener("mouseover",()=>{
 // })
 
 
-const more_view_btn = document.querySelector("#more-view-btn");
-more_view_btn.addEventListener("click", () => {
-    const more_view_containers = document.querySelectorAll(".search-result-scroll-banner-container");
-    
-    for (let j = 0; j < 3; j ++) {
-        const newDiv = document.createElement("div");
-        newDiv.className = "swiper-slide swiper-slide-active show";
-        newDiv.style.width = "236.8px";
-        newDiv.style.marginRight = "24px";
-
-        newDiv.innerHTML = `
-            <div class="css-1pulbqw">
-                <div class="css-3xk0il"></div>
-                <div class="css-qn01ot">
-                    <div class="css-18m1pdx">
-                        [2023 연말 결산] 와디즈가 조명한 스무 갈래의 열린 길
-                    </div>
-                    <div class="css-ivvewn" style="display: none;">
-                        성공 메이커 이야기 연말 결산
-                    </div>
-                </div>
-            </div>
-        `;
-        show_page.appendChild(newDiv);
-    }
-    const newDiv2 = document.createElement("div");
-    newDiv2.className = "search-result-scroll-banner-container";
-    newDiv2.id = "search-scroll-banner";
-    
-    newDiv2.innerHTML = `
-        <div class="search-result-scroll-banner">
-            <div class="search-result-banner-inner">
-                <div id="more-view-btn" class="search-result-inner-inner">
-                    <span>더보기</span>
-                </div>
-                <div class="search-result-inner-inner">
-                    <span>목록으로 이동</span>
-                </div>
-            </div>
-        </div>
-    `;
-    show_page.appendChild(newDiv2);
-    more_view_containers[0].remove();
-    const new_more_view_btn = newDiv2.querySelector("#more-view-btn");
-    new_more_view_btn.addEventListener("click", ()=>{
-        more_view_btn.click();
-    })
-});
+// const more_view_btn = document.querySelector("#more-view-btn");
+// more_view_btn.addEventListener("click", () => {
+//     const more_view_containers = document.querySelectorAll(".search-result-scroll-banner-container");
+//
+//     for (let j = 0; j < 3; j ++) {
+//         const newDiv = document.createElement("div");
+//         newDiv.className = "swiper-slide swiper-slide-active show";
+//         newDiv.style.width = "236.8px";
+//         newDiv.style.marginRight = "24px";
+//
+//         newDiv.innerHTML = `
+//             <div class="css-1pulbqw">
+//                 <div class="css-3xk0il"></div>
+//                 <div class="css-qn01ot">
+//                     <div class="css-18m1pdx">
+//                         [2023 연말 결산] 와디즈가 조명한 스무 갈래의 열린 길
+//                     </div>
+//                     <div class="css-ivvewn" style="display: none;">
+//                         성공 메이커 이야기 연말 결산
+//                     </div>
+//                 </div>
+//             </div>
+//         `;
+//         show_page.appendChild(newDiv);
+//     }
+//     const newDiv2 = document.createElement("div");
+//     newDiv2.className = "search-result-scroll-banner-container";
+//     newDiv2.id = "search-scroll-banner";
+//
+//     newDiv2.innerHTML = `
+//         <div class="search-result-scroll-banner">
+//             <div class="search-result-banner-inner">
+//                 <div id="more-view-btn" class="search-result-inner-inner">
+//                     <span>더보기</span>
+//                 </div>
+//                 <div class="search-result-inner-inner">
+//                     <span>목록으로 이동</span>
+//                 </div>
+//             </div>
+//         </div>
+//     `;
+//     show_page.appendChild(newDiv2);
+//     more_view_containers[0].remove();
+//     const new_more_view_btn = newDiv2.querySelector("#more-view-btn");
+//     new_more_view_btn.addEventListener("click", ()=>{
+//         more_view_btn.click();
+//     })
+// });
 
 
 
@@ -541,3 +759,5 @@ likes.forEach((like) => {
         e.ariaPressed = "true";
     });
 });
+
+

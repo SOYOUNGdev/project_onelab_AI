@@ -17,19 +17,19 @@
                         <ul class="desktop-container">
                             <!--원랩-->
                             <li class="desktop-item">
-                                <a class="desktop-link" href=""><span>원랩</span></a>
+                                <a class="desktop-link" href="{% url 'onelab:list' %}"><span>원랩</span></a>
                             </li>
                             <!--공지-->
                             <li class="desktop-item">
-                                <a class="desktop-link" href=""><span>공지</span></a>
+                                <a class="desktop-link" href="{% url 'notification:list' %}"><span>공지</span></a>
                             </li>
                             <!--장소공유-->
                             <li class="desktop-item">
-                                <a class="desktop-link" href=""><span>장소공유</span></a>
+                                <a class="desktop-link" href="{% url 'place:list' %}"><span>장소공유</span></a>
                             </li>
                             <!--커뮤니티-->
                             <li class="desktop-item">
-                                <a class="desktop-link" href=""><span>커뮤니티</span></a>
+                                <a class="desktop-link" href="{% url 'community:list' %}"><span>커뮤니티</span></a>
                             </li>
                             <!--학교-->
                             <li class="desktop-item">
@@ -124,5 +124,5 @@
         <!--헤더 상세 컨텐츠-->
 {% endblock %}
 {% block js %}
-    <script src="{% static 'js/header/main-page-header-list.js' %}"></script>
+    <script src="{% static 'member/js/header/main-page-header-list.js' %}"></script>
 {% endblock %}

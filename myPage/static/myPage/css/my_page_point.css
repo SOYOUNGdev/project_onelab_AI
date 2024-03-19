@@ -286,12 +286,14 @@ h2.mypage-top-title {
     clear: both;
     display: block;
 }
-
+.point-keywords-children{
+    font-size: 18px;
+}
 .point-keywords {
     display: flex;
     align-items: center;
     padding-right: 16px;
-    height: 40px;
+    height: 50px;
     overflow-x: auto;
     gap: 16px;
     white-space: nowrap;
