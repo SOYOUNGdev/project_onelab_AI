@@ -72,7 +72,7 @@ INSTALLED_APPS = [
 ]
 
 
-SITE_ID = 2
+SITE_ID = 3
 
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_LOGOUT_ON_GET = True
@@ -81,8 +81,6 @@ ACCOUNT_LOGOUT_REDIRECT_URL = '/member/login/'
 
 
 SOCIALACCOUNT_AUTO_SIGNUP = True
-
-
 
 
 EMAIL_HOST = 'smtp.gmail.com'       # 메일 호스트 서버

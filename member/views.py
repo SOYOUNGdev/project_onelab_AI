@@ -124,7 +124,7 @@ class MemberJoinView(View):
 
         # OAuth 검사
         # OAuth 최초 로그인 시 TBL_MEMBER에 INSERT된 회원 ID가 member_id 이다.
-        member = Member.objects.filter(id=last_member.id, member_type='naver')
+        member = Member.objects.filter(id=last_member.id, member_type__in=['naver', 'kakao', 'google'])
         #   1. 아이디는 중복이 없다
         #   2. 이메일과 타입에 중복이 있다.
         #   3. OAuth로 최초 로그인된 회원을 찾아라

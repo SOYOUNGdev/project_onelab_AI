@@ -54,6 +54,8 @@ const showList = (review_info) => {
                 schoolName = '고려대학교';
             }else if (review.review__member__member_school_email.includes('yonsei')) {
                 schoolName = '연세대학교';
+            }else {
+                schoolName = review.review__member__member_school_email;
             }
             const profile =
             reviewWrapper.innerHTML += `

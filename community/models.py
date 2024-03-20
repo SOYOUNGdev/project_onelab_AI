@@ -15,7 +15,7 @@ class Community(Period):
     )
     community_title = models.CharField(max_length=50, null=False, blank=False)
     community_content = models.CharField(max_length=3000, null=False, blank=False)
-    post_status = models.CharField(max_length=100, choices=COMMUNITY_CATEGORIES, default='3')
+    community_post_status = models.CharField(max_length=100, choices=COMMUNITY_CATEGORIES, default='3')
     status = models.BooleanField(default=True)
     member = models.ForeignKey(Member, on_delete=models.PROTECT)
 

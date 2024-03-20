@@ -46,7 +46,7 @@ class OAuthLoginView(View):
         url = "main"
         if member.member_name is None or created:
             # return redirect(f'/?member=_email={member_email}&member_type={user.provider}&id={member.id}')
-            url = f'/member/join/?member_email={member_email}&member_type={user.provider}&id={member.id}&member_name={member.member_name}'
+            url = f'/member/join/?member_email={member_email}&member_type={user.provider}&id={member.id}&member_name={member_nickname}'
 
         # OAuth 최초 로그인이 아닐 경우 조회된 member 객체를 세션에 담아준다.
         request.session['member'] = MemberSerializer(member).data
