@@ -41,8 +41,8 @@ class CommunityWriteView(View):
             'member': member,
             'community_title': data['community-title'],
             'community_content': data['community-content'],
-            'post_status': data['categories'],
-            'member_file': MemberFile.objects.filter(member=member),
+            # 'post_status': data['categories'],
+            # 'member_file': MemberFile.objects.filter(member=member),
         }
 
         community = Community.objects.create(**data)

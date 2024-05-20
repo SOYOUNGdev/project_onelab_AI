@@ -140,15 +140,18 @@ DATABASES = {
         # DBMS 모듈 경로
         'ENGINE': 'django.db.backends.mysql',
         # DATABASE 이름
-        'NAME': 'onelab1',
+        'NAME': 'oneai',
         # 계정 이름
-        'USER': 'onelab1',
+        'USER': 'oneai',
         # 비밀번호
         'PASSWORD': '1234',
         # DBMS가 설치된 서버 PC의 IP
-        'HOST': '13.125.132.175',
+        'HOST': '54.180.120.54',
         # DBMS의 포트번호
-        'PORT': '3306'
+        'PORT': '3306',
+        'OPTIONS': {
+            'init_command': 'SET sql_mode="STRICT_TRANS_TABLES"'
+        }
     }
 }
 
