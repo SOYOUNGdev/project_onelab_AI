@@ -3,11 +3,31 @@ import mimetypes
 import os
 from decimal import Decimal
 from urllib.parse import urlparse
+import pandas as pd
+from docx import Document
+import pymupdf
+import fitz
+
+import time
+import pandas as pd
+import cv2
+import json
+import matplotlib.pyplot as plt
+
+import shutil
+import os
+import random
+
+import requests
+import uuid
+import time
+import json
 
 from django.core.files.storage import FileSystemStorage
 from django.core.paginator import Paginator
 from django.db import transaction
 from django.db.models import Avg, F, Q, Subquery, Count, Sum
+from django.db.models.fields.files import ImageFieldFile
 from django.http import JsonResponse, FileResponse
 from django.shortcuts import render, redirect
 from django.views import View
@@ -30,91 +50,273 @@ from oneLabProject.settings import MEDIA_URL
 from shareMember.models import ShareMember
 from university.models import University
 
+from django.views import View
+from django.shortcuts import render
+from django.core.paginator import Paginator
+from django.db.models import Avg
+from .models import Share, ShareReview, ShareLike, ShareFile
+from university.models import University
+from onelab.models import OneLab
+from member.models import MemberFile, Member
+from like.models import Like
+from decimal import Decimal
+from django.conf import settings
 
-# 자료 공유 게시글 상세 view
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+import os
+
+from django.conf import settings
+import os
+
+
+def get_file_content(file_path, file_id):
+    # ImageFieldFile 객체를 문자열로 변환
+    file_path_str = str(file_path)
+
+    # 파일 경로에서 "../upload/" 제거
+    if file_path_str.startswith("../upload/"):
+        file_path_str = file_path_str.replace("../upload/", "")
+
+    # 절대 경로 생성
+    file_path_full = os.path.join(settings.MEDIA_ROOT, file_path_str)
+
+    if file_path_str.lower().endswith('.hwp'):
+        with open(file_path_full, 'r', encoding='utf-8') as file:
+            file_content = file.read()
+        return file_content
+    elif file_path_str.lower().endswith('.docx'):
+        file_content = get_docx_content(file_path)
+        return file_content
+    elif file_path_str.lower().endswith('.pdf'):
+        file_content = get_pdf_to_img(file_path, file_id)
+        # print(file_content)
+        return file_content
+    elif file_path_str.lower().endswith('.xlsx'):
+        file_content = get_excel_content(file_path)
+        return file_content
+    else:
+        return '다름'
+
+def get_excel_content(file_path):
+    try:
+        # 엑셀 파일을 읽어서 DataFrame으로 변환
+        df = pd.read_excel(file_path)
+        # DataFrame을 문자열로 변환하여 반환
+        file_content = df.to_string()
+        return file_content
+    except FileNotFoundError:
+        print(f"File not found: {file_path}")
+        return None
+    except Exception as e:
+        print(f"Error in reading file: {file_path}")
+        print(e)
+        return None
+
+def get_docx_content(file_path):
+    try:
+        doc = Document(file_path)
+        # 문단별로 텍스트를 추출하여 리스트로 저장
+        paragraphs = [paragraph.text for paragraph in doc.paragraphs]
+        # 리스트를 하나의 문자열로 결합하여 반환
+        file_content = '\n'.join(paragraphs)
+        return file_content
+    except FileNotFoundError:
+        print(f"File not found: {file_path}")
+        return None
+    except Exception as e:
+        print(f"Error in reading file: {file_path}")
+        print(e)
+        return None
+
+def get_pdf_to_img(file_path, file_id):
+    local_file_path = os.path.join(settings.MEDIA_ROOT, str(file_path))
+    output_dir = os.path.join(settings.MEDIA_ROOT, "share/image/")
+
+    os.makedirs(output_dir, exist_ok=True)
+
+    try:
+        doc = fitz.open(local_file_path)
+        first_page = doc.load_page(0)
+        pixmap = first_page.get_pixmap()
+        output_image_path = os.path.join(output_dir, f"{file_id}.png")
+        pixmap.save(output_image_path)
+
+        full_text = get_img_to_content(output_image_path)
+
+        return full_text
+
+    except Exception as e:
+        print(f"오류 발생: {e}")
+
+def get_img_to_content(output_image_path):
+    pd.set_option('display.max_rows', 500)
+    pd.set_option('display.max_columns', 500)
+    pd.set_option('display.width', 5000)
+
+    secret_key = 'c2Z3Qk5NZFl1c1poTVFWRkh3cG1zbGZoTWVhTXNEQkU='
+    api_url = 'https://v0ozwri6qr.apigw.ntruss.com/custom/v1/31037/247390edd22db10357954c4ca8730e1c49122c5365221fb7aada0ac3083455b3/general'
+    image_file = output_image_path
+
+    request_json = {
+        'images': [
+            {
+                'format': 'png',
+                'name': 'demo'
+            }
+        ],
+        'requestId': str(uuid.uuid4()),
+        'version': 'V2',
+        'timestamp': int(round(time.time() * 1000))
+    }
+
+    payload = {'message': json.dumps(request_json).encode('UTF-8')}
+    files = [('file', open(image_file, 'rb'))]
+    headers = {'X-OCR-SECRET': secret_key}
+
+    response = requests.request("POST", api_url, headers=headers, data=payload, files=files)
+
+    image = cv2.imread(image_file)
+    highlighted_image = image.copy()
+
+    if response.status_code == 200:
+        ocr_results = json.loads(response.text)
+        all_texts = []
+        for image_result in ocr_results['images']:
+            for field in image_result['fields']:
+                text = field['inferText']
+                all_texts.append(text)
+
+                bounding_box = field['boundingPoly']['vertices']
+                start_point = (int(bounding_box[0]['x']), int(bounding_box[0]['y']))
+                end_point = (int(bounding_box[2]['x']), int(bounding_box[2]['y']))
+                cv2.rectangle(highlighted_image, start_point, end_point, (0, 0, 255), 2)
+
+        full_text = ' '.join(all_texts)
+        return full_text
+    else:
+        print(f"OCR 결과를 받아오지 못했습니다. 상태 코드: {response.status_code}")
+
+def calculate_word_similarity(file_contents):
+    count_v = CountVectorizer(tokenizer=lambda x: x.split())
+    count_matrix = count_v.fit_transform(file_contents)
+
+    cosine_sim = cosine_similarity(count_matrix)
+
+    return cosine_sim
+
+def find_similar_posts(all_posts, current_file_id):
+    # 모든 ShareFile의 파일 내용을 리스트로 가져옴
+    file_contents = []
+    for post in all_posts:
+        content = get_file_content(post.path, post.file_id)
+        if content:
+            file_contents.append(content)
+
+    # 단어 기준 코사인 유사도 계산
+    cosine_sim = calculate_word_similarity(file_contents)
+
+    # 현재 게시물의 파일과의 유사도가 높은 게시물 선택
+    select_index = None
+    for idx, post in enumerate(all_posts):
+        if post.file_id == current_file_id:
+            select_index = idx
+            break
+
+    if select_index is None:
+        return []  # 현재 파일을 찾지 못한 경우 빈 리스트 반환
+
+    similarities_to_doc = cosine_sim[select_index]
+    sorted_indices = similarities_to_doc.argsort()[::-1]
+
+    # 자기 자신을 제외한 인덱스 리스트 생성
+    sorted_indices = [idx for idx in sorted_indices if idx != select_index][1:5]
+
+    similar_posts = [(all_posts[int(idx)], similarities_to_doc[idx]) for idx in sorted_indices]
+
+    return similar_posts
+
+
 class ShareDetailView(View):
     def get(self, request, id):
-        # 해당 게시글의 id를 이용하여 share객체 1개 가져오기 -> post로 선언
         post = Share.objects.get(id=id)
 
-        # 게시글을 작성한 대학생 회원 객체 1개 가져와서 university_member로 선언
         university_member = University.objects.get(member=post.university)
-
-        # 상세 페이지 내에 들어갈 작성자의 글
-        # 작성자가 현재 게시글(post)의 작성자와 같은 글들 중, 삭제되지 않은 글들만 최신순으로 가져오기
         post_list = Share.enabled_objects.filter(university=university_member).order_by('-id')
-        # Paginator를 사용하여 최신글 4개만 가져와서 posts로 선언
         page = request.GET.get('page', 1)
         paginator = Paginator(post_list, 4)
         posts = paginator.page(page)
 
-        # 이미지 파일 가져오기
-        # 4개의 자료글 하나씩 돌면서
+        # 파일 가져오기
         for p in posts:
-            # 해당 장소와 연관된 file 중, 첫 번째 파일만 가져와 first_file로 선언
             first_file = p.sharefile_set.first()
             if first_file:
                 file_name = first_file.path.name
                 file_extension = file_name.split('.')[-1].lower()  # 파일 확장자 추출
-                # 추출된 확장자 -> file_extension으로 선언
                 p.file_extension = file_extension
+                # 파일이 있으면 파일의 경로를 기반으로 URL 생성
+                p.image_url = f"{MEDIA_URL}{first_file.path}"
+                p.file_content = get_file_content(first_file.path, first_file.file_id)
+            else:
+                p.image_url = None
+                p.file_content = None
 
         # 리뷰 평균과 개수
-        # 해당 게시글에 작성된 리뷰 중, 삭제되지 않은 리뷰만 가져와 reviews로 선언
         reviews = ShareReview.enabled_objects.filter(share_id=post.id)
-        # 만약 리뷰가 있다면
         if len(reviews) > 0:
-            # 집계함수를 이용 -> 총 개수를 review_count로 선언
             review_count = reviews.count()
-            # 각 리뷰들의 별점을 기반으로 aggregate 함수 사용 -> 전체 평균을 구하여 review_avg_decimal로 선언
             review_avg_decimal = reviews.aggregate(avg_rating=Avg('review__review_rating'))['avg_rating']
-            # 구한 평균을 소수점 한자리까지 반올림 -> review_avg_rounded로 선언
             review_avg_rounded = Decimal(review_avg_decimal).quantize(Decimal('0.1'))
-        # 리뷰가 없다면
         else:
-            # 리뷰 개수 = 0
             review_count = 0
-            # 리뷰 평균 = 0.0
             review_avg_rounded = 0.0
 
         # 좋아요 수
-        # 좋아요가 되어있는 글들 중, 해당 게시글의 좋아요만 가져오기 -> 집계함수를 사용 -> 해당 게시글의 총 좋아요 수 = share_like_count로 선언
         share_like_count = ShareLike.objects.filter(share=post).count()
 
         # 원랩 수
-        # 회원이 들어가 있는 원랩 전부 가져오기
         onelabs = OneLab.objects.filter(university=university_member)
-        # 집계함수를 이용 -> 총 개수 oelab_count로 선언
         onelab_count = onelabs.count()
 
         # 회원이 좋아요를 한 상태인지
-        # 로그인 되어있는(session에 저장되어 있는) 회원 객체 1개 가져와 member로 선언
         member = Member.objects.get(id=request.session['member']['id'])
-        # 해당 글에 좋아요를 한 sharelike 객체 가져와서 share_likes로 선언
         share_likes = ShareLike.objects.filter(share=post)
-
-        # member가 좋아요를 한 상태인지 결정할 flag를 member_like로 선언, 초기값은 False
         member_like = False
-        # 하나씩 반복
         for share_like in share_likes:
             try:
-                # 해당 Like 객체
-                # member = 현재 로그인된 회원, like_status = 좋아요를 한 상태(취소시, False로 상태변경됨), id = 해당 share_like객체의 like_id
+                # 해당 Like 객체를 가져옵니다.
                 like_object = Like.objects.get(member=member, like_status=True, id=share_like.like_id)
-                # 해당 Like 객체가 존재
-                # 로그인된 회원이 해당 게시글에 좋아요를 한 상태이므로, member_like를 True로 변경
+                # 예외가 발생하지 않았으므로, 해당 Like 객체가 존재합니다.
                 member_like = True
-            # 해당 Like 객체가 존재하지 않는다면
             except Like.DoesNotExist:
-                # 좋아요한 상태가 아님
+                # 해당 Like 객체가 존재하지 않습니다.
                 member_like = False
 
-        # 해당 회원의 프로필이미지 가져오기
         profile = MemberFile.objects.filter(member=university_member.member)
         if profile:
             profile = profile[0]
+        # print(profile.path)
 
-        # 위에서 가져온 data들을 dict 타입인 context로 선언
+        # 전체 게시물의 file 가져오기
+        all_posts = ShareFile.objects.all().order_by('-share_id')
+
+        # 현재 게시물의 file 객체 찾기
+        current_file = post.sharefile_set.first()
+
+        # 유사한 게시물 찾기
+        similar_posts = find_similar_posts(all_posts, current_file.file_id if current_file else None)
+        similar_lists = []
+
+        for similar_post, similarity in similar_posts:
+            share = Share.objects.get(id=similar_post.share_id)
+            similar_lists.append(share)
+
         context = {
             'share': post,
             'share_files': list(post.sharefile_set.all()),
@@ -126,8 +328,14 @@ class ShareDetailView(View):
             'university_member': university_member,
             'member_like': member_like,
             'profile': profile.path,
+            'similar_posts': similar_lists,  # 유사한 게시물 추가
         }
-        # 상세보기 페이지로 이동하면서 context 함께 전달
+
+        for similar_post, similarity in similar_posts:
+            share = Share.objects.get(id=similar_post.share_id)
+            content = get_file_content(similar_post.path, similar_post.file_id)
+            print(share.id, similarity)
+
         return render(request, 'share/detail.html', context)
 
     # ------------------------------------------------------------------------------

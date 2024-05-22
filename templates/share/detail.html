@@ -720,6 +720,100 @@
 
                                                 <!-- 맨밑 그림 쪽 -->
                                                 <section>
+                                                    <div>
+                                                                    <div class="recommendation-related-header" style="margin-top: 140px;">
+                                                                        <div class="recommendation-related-title">
+                                                                            이 자료와 유사한 자료
+                                                                        </div>
+
+                                                                    </div>
+                                                                    <div class="recommendation-best-list-container">
+                                                                    
+                                                                    {% for post in similar_posts %}
+                                                                    <div class="recommendation-card-wrap-container">
+                                                                        <div class="home-vertical-card-container">
+                                                                            <a class="home-vertical-card-content" href="{% url 'share:detail' id=post.id %}">
+                                                                                <div class="home-vertical-card-thumbnail-box" style="padding-top: 56.25%;">
+                                                                                    <div class="home-vertical-card-thumbnail-wrap">
+                                                                                        {% with university=post.university.university_member_school %}
+                                                                                            {% if university == '연세대학교' %}
+                                                                                                <div class="thumbnail-image-container">
+                                                                                                    <img class="thumbnail-image-img" src="{% static 'share/images/yns-logo.png' %}" alt="">
+                                                                                                </div>
+                                                                                            {% elif university == '카이스트' %}
+                                                                                                <div class="thumbnail-image-container">
+                                                                                                    <img class="thumbnail-image-img" src="{% static 'share/images/kaist-logo.svg' %}" alt="">
+                                                                                                </div>
+                                                                                            {% elif university == '서울대학교' %}
+                                                                                                <div class="thumbnail-image-container">
+                                                                                                    <img class="thumbnail-image-img" src="{% static 'share/images/snu-logo.svg' %}" alt="">
+                                                                                                </div>
+                                                                                            {% elif university == '고려대학교' %}
+                                                                                                <div class="thumbnail-image-container">
+                                                                                                    <img class="thumbnail-image-img" src="{% static 'share/images/korea-logo.svg' %}" alt="">
+                                                                                                </div>
+                                                                                            {% else %}
+                                                                                                <div class="thumbnail-image-container">
+                                                                                                    <img class="thumbnail-image-img" src="{% static 'public/images/realfavicon.png' %}" alt="">
+                                                                                                </div>
+                                                                                            {% endif %}
+                                                                                        {% endwith %}
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="home-vertical-card-info-box">
+                                                                                    <div class="home-vertical-card-info">
+                                                                                        <div class="store-badge-group-container">
+                                                                                            <div class="store-badges small" style="display: flex; margin-right: 5px;">
+                                                                                                {% with first_file=post.sharefile_set.first %}
+                                                                                                    {% if first_file %}
+                                                                                                        {% if first_file.file_extension == 'pdf' %}
+                                                                                                            <span class="label-badge pdf">PDF</span>
+                                                                                                        {% elif first_file.file_extension == 'hwp' %}
+                                                                                                            <span class="label-badge hwp">HWP</span>
+                                                                                                        {% elif first_file.file_extension == 'xlsx' %}
+                                                                                                            <span class="label-badge xls">XLS</span>
+                                                                                                        {% elif first_file.file_extension == 'docx' %}
+                                                                                                            <span class="label-badge docx">DOCX</span>
+                                                                                                        {% endif %}
+                                                                                                    {% endif %}
+                                                                                                {% endwith %}
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="price-info-wrapper-container">
+                                                                                            <span>{{ post.share_points }}포인트</span>
+                                                                                        </div>
+                                                                                        <strong class="title-title">{{ post.share_title }}</strong>
+                                                                                    </div>
+                                                                                    <div class="home-vertical-card-badge-group">
+{#                                                                                        <div class="store-rating-wrapper-rating-wrapper">#}
+{#                                                                                            <div class="rating-score-container">#}
+{#                                                                                                <div class="rating-score-icon ratings"></div>#}
+{#                                                                                                <span class="rating-score-score">4.7</span>#}
+{#                                                                                            </div>#}
+{#                                                                                            <em class="store-rating-wrapper-count">(44)</em>#}
+{#                                                                                        </div>#}
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="card-spinner-container">
+                                                                                    <div class="card-spinner-loader" style="width: 32px; height: 32px;">
+                                                                                        <svg viewBox="25 25 50 50" aria-label="Loading">
+                                                                                            <g class="loader-circular">
+                                                                                                <circle class="loader-path"></circle>
+                                                                                            </g>
+                                                                                        </svg>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </a>
+
+                                                                        </div>
+                                                                    </div>
+                                                                    {% endfor %}
+                                                                    
+                                                                    <div></div>
+                                                                    <div></div>
+                                                                    <div></div>
+                                                                </div>
+                                                                </div>
                                                     <div
                                                         class="detail-page-recommendation-container"
                                                     >
