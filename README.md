@@ -10,6 +10,9 @@
 2. 데이터 수집 (Data Crowling - BeautifulSoup)
 3. 유사도 분석 (Cosine similarity)
 4. Django 적용
+5. 서버 배포 및 화면 시연
+6. Trouble shooting
+7. 느낀 점
 
 ---
 
