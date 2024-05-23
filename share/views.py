@@ -45,7 +45,7 @@ from onelab.models import OneLab
 from onelabMember.models import OneLabMember
 from point.models import Point
 from review.models import Review
-from share.models import Share, ShareFile, ShareReview, ShareLike, SharePoints
+from share.models import Share, ShareFile, ShareReview, ShareLike, SharePoints, ShareFileContent
 from oneLabProject.settings import MEDIA_URL
 from shareMember.models import ShareMember
 from university.models import University
@@ -96,7 +96,6 @@ def get_file_content(file_path, file_id):
         return file_content
     elif file_path_str.lower().endswith('.pdf'):
         file_content = get_pdf_to_img(file_path, file_id)
-        # print(file_content)
         return file_content
     elif file_path_str.lower().endswith('.xlsx'):
         file_content = get_excel_content(file_path)
@@ -203,42 +202,40 @@ def get_img_to_content(output_image_path):
     else:
         print(f"OCR 결과를 받아오지 못했습니다. 상태 코드: {response.status_code}")
 
+
 def calculate_word_similarity(file_contents):
     count_v = CountVectorizer(tokenizer=lambda x: x.split())
     count_matrix = count_v.fit_transform(file_contents)
-
     cosine_sim = cosine_similarity(count_matrix)
-
     return cosine_sim
 
-def find_similar_posts(all_posts, current_file_id):
-    # 모든 ShareFile의 파일 내용을 리스트로 가져옴
-    file_contents = []
+
+def find_similar_posts(all_posts, current_file):
+    # 모든 ShareFileContent의 text를 리스트로 가져옴
+    file_contents = [current_file.text]  # 현재 파일의 텍스트를 추가합니다.
     for post in all_posts:
-        content = get_file_content(post.path, post.file_id)
+        content = post.text
         if content:
             file_contents.append(content)
 
     # 단어 기준 코사인 유사도 계산
     cosine_sim = calculate_word_similarity(file_contents)
 
-    # 현재 게시물의 파일과의 유사도가 높은 게시물 선택
-    select_index = None
-    for idx, post in enumerate(all_posts):
-        if post.file_id == current_file_id:
-            select_index = idx
-            break
-
-    if select_index is None:
-        return []  # 현재 파일을 찾지 못한 경우 빈 리스트 반환
-
-    similarities_to_doc = cosine_sim[select_index]
+    # 현재 게시물의 파일 내용과의 유사도가 높은 내용 선택
+    similarities_to_doc = cosine_sim[0]  # 첫 번째 행은 현재 파일과 다른 파일들의 유사도
     sorted_indices = similarities_to_doc.argsort()[::-1]
 
-    # 자기 자신을 제외한 인덱스 리스트 생성
-    sorted_indices = [idx for idx in sorted_indices if idx != select_index][1:5]
+    # 자기 자신을 제외한 인덱스 리스트 생성 (0번 인덱스를 제외)
+    sorted_indices = [int(idx) for idx in sorted_indices if idx != 0]
 
-    similar_posts = [(all_posts[int(idx)], similarities_to_doc[idx]) for idx in sorted_indices]
+    if not sorted_indices:  # sorted_indices가 비어 있는 경우
+        return []
+
+    # 상위 4개의 유사한 게시물 선택 (리스트 길이가 4보다 작을 경우 모든 게시물 선택)
+    selected_indices = sorted_indices[1:5] if len(sorted_indices) >= 4 else sorted_indices
+    print(selected_indices)
+    # 유사한 게시물 리스트 생성
+    similar_posts = [(all_posts[idx - 1], similarities_to_doc[idx]) for idx in selected_indices]
 
     return similar_posts
 
@@ -303,14 +300,16 @@ class ShareDetailView(View):
             profile = profile[0]
         # print(profile.path)
 
-        # 전체 게시물의 file 가져오기
-        all_posts = ShareFile.objects.all().order_by('-share_id')
+        # 전체 파일의 텍스트 가져오기
+        all_posts = ShareFileContent.objects.all().order_by('-share_id')
 
         # 현재 게시물의 file 객체 찾기
-        current_file = post.sharefile_set.first()
+        # current_file = post.sharefile_set.first()
+        # 현재 게시물의 텍스트가 들어있는 테이블에서 현재 파일 객체 찾기
+        current_file = post.sharefilecontent_set.get(share=post)
 
         # 유사한 게시물 찾기
-        similar_posts = find_similar_posts(all_posts, current_file.file_id if current_file else None)
+        similar_posts = find_similar_posts(all_posts, current_file)
         similar_lists = []
 
         for similar_post, similarity in similar_posts:
@@ -333,7 +332,6 @@ class ShareDetailView(View):
 
         for similar_post, similarity in similar_posts:
             share = Share.objects.get(id=similar_post.share_id)
-            content = get_file_content(similar_post.path, similar_post.file_id)
             print(share.id, similarity)
 
         return render(request, 'share/detail.html', context)
@@ -522,7 +520,11 @@ class ShareWriteView(View):
             # 업로드된 파일을 File 모델에 저장
             file_instance = File.objects.create(file_size=file.size)
             # 만든 파일 객체를 PlaceLike 모델에 저장
-            ShareFile.objects.create(share=share, file=file_instance, path=file)
+            create_file = ShareFile.objects.create(share=share, file=file_instance, path=file)
+            # 파일에 있는 내용만 읽어와서 share_file_content 테이블에 저장
+            file_text = get_file_content(create_file.path, create_file.file_id)
+            ShareFileContent.objects.create(share=share, file_name=file.name, text=file_text)
+
 
         # 작성한 게시글의 상세보기 페이지로 이동
         return redirect(reverse('share:detail', kwargs={'id': share.id}))
