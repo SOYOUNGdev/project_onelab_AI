@@ -74,3 +74,11 @@ class ShareReview(Period):
 
     class Meta:
         db_table = 'tbl_share_review'
+
+class ShareFileContent(Period):
+    share = models.ForeignKey(Share, on_delete=models.PROTECT, null=False)
+    text = models.TextField(null=False, blank=False)
+    file_name = models.CharField(max_length=255)
+
+    class Meta:
+        db_table = 'tbl_share_file_content'
