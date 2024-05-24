@@ -30,7 +30,7 @@
 - 수집해야할 데이터
 
   > 내용(텍스트) 분석이 주 이기 때문에, 내용이 많은 네이버 뉴스를 활용하기로 결정하였습니다.
-- BeautifulSoup를 활용하여 데이터를 수집, python에서 데이터를 csv파일로 내보냈습니다. 
+- BeautifulSoup를 활용하여 데이터를 수집, pycharm에서 데이터를 csv파일로 내보냈습니다. 
 <details>
   <summary>크롤링 과정 확인하기</summary>
   <img src="https://github.com/SOYOUNGdev/project_onelab_AI/assets/115638411/9f2f8748-59bf-45a7-99c5-8d68f1c205ce" width="500px;">
@@ -39,7 +39,7 @@
 ---
 
 ### 3️⃣ 유사도 분석 (Cosine similarity)
-1. python에서 크롤링한 데이터 csv 파일을 jupyter notebook에서 불러와서 확인하였습니다.
+1. pycharm에서 크롤링한 데이터 csv 파일을 jupyter notebook에서 불러와서 확인하였습니다.
        
    <details>
        <summary>코드 확인</summary>
@@ -101,7 +101,7 @@
       <img src="https://github.com/SOYOUNGdev/project_onelab_AI/assets/115638411/c01e5a0d-425d-4177-853f-812a28de25a1" width="600px;">
     </details>
 
-3. 상세 페이지로 이동할 때, 유사도 테이블 전체를 불러와서 현재 게시물 내의 파일과의 유사도 분석을 진행합니다.
+3. 사용자가 상세 페이지로 이동할 때, 유사도 테이블 전체를 불러와서 현재 게시물 내의 파일과의 유사도 분석을 진행합니다.
    <details>
      <summary>유사도 분석 과정</summary>  
      
