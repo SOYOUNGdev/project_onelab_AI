@@ -1,3 +1,4 @@
+<sub><a href="https://github.com/SOYOUNGdev/project-oneLabServer?tab=readme-ov-file">원랩 프로젝트 보러가기</a></sub>
 # 👩‍💻 ONELAB AI 프로젝트
 
 ### AI 프로젝트 소개
